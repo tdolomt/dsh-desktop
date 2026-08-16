@@ -85,12 +85,12 @@ dsh-web-portable/
 rebuild.cmd
 ```
 
-Output: `DSH-Web-1.0.0.zip` (installer + encrypted payload + docs).
+Output: `DSH-Web-1.0.0.zip` .
 
 ## Repository contents
 
 - Source code and build scripts only; large artifacts (payload, zip) are
-  published as **GitHub Release assets** (up to 2 GB per file)
+  published as **GitHub Release assets** 
 - `rebuild.cmd` uses relative paths — clone anywhere and run
 - License: this repository is **MIT Licensed** (see LICENSE); bundled
   components belong to their respective owners (DeepSeek Harness: MIT;
