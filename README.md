@@ -68,7 +68,11 @@ rebuild.cmd
 - `rebuild.cmd` 使用相对路径,clone 到任意位置即可运行
 - 许可:Apache-2.0(与 DeepSeek Harness 一致;内置组件版权归各自所有者)
 
-## 致谢
+## 致谢与插件来源
 
+- 内置 Web UI 插件(任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心、Web UI 插件宿主)
+  来源于第三方开源项目
+  [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)
+  (Apache-2.0),经 npm 以 `@linxin666/*` 作用域发布,版权归其原作者所有。
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 - [Electron](https://www.electronjs.org/) / [Node.js](https://nodejs.org/)
