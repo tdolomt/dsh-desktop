@@ -48,9 +48,13 @@ After installation, the install directory ships three maintenance scripts
 | `安装插件.cmd` | Install a new plugin (enter the package name when prompted) |
 | `更新插件.cmd` | Update **all** Web UI plugins (new ones included) |
 | `更新DSH.cmd` | Update the dsh engine (your data is not touched) |
+| `导出数据.cmd` | Export credentials/sessions/settings/plugin config to a zip (desktop) |
+| `恢复数据.cmd` | Restore user data from a backup zip after (re)installing |
 
 After any script: exit DSH Web from the tray, then start it again.
 Plugins live under the install dir `data\profiles\web\`.
+Tip: installing over an existing directory keeps sessions and credentials
+automatically (they are not part of the package).
 
 ## Building from source
 
