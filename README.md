@@ -79,7 +79,6 @@ dsh-desktop/
 rebuild.cmd
 ```
 
-产物:`DSH-Web-1.0.0.zip`。
 
 产物:`DSH-Desktop-1.0.0.zip`(安装程序 + 加密数据包 + 文档)。
 
