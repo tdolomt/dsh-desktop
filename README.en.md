@@ -38,6 +38,20 @@ Unzip → run DSH-Installer-Stub.exe → choose install location → done
 Full guide: [docs/安装说明.txt](docs/安装说明.txt)
 (install / update dsh / update Node / plugin management / uninstall / FAQ).
 
+## Daily maintenance (three one-click scripts in the install dir)
+
+After installation, the install directory ships three maintenance scripts
+(also kept under `scripts/` in this repository):
+
+| Script | Purpose |
+|---|---|
+| `安装插件.cmd` | Install a new plugin (enter the package name when prompted) |
+| `更新插件.cmd` | Update **all** Web UI plugins (new ones included) |
+| `更新DSH.cmd` | Update the dsh engine (your data is not touched) |
+
+After any script: exit DSH Web from the tray, then start it again.
+Plugins live under the install dir `data\profiles\web\`.
+
 ## Building from source
 
 ### Layout

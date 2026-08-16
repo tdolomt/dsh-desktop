@@ -114,3 +114,16 @@ A: 查看 安装目录\data\logs\dsh-web.log。
 Q: 更新后界面/插件异常?
 A: dsh 处于 RC 阶段可能有不兼容变更:先备份 data,
    再重新运行本安装包安装到同一位置。
+
+十、日常维护(一键脚本)
+----------------------
+安装目录内自带三个维护脚本,双击即可:
+
+  安装插件.cmd   安装新插件(按提示输入插件包名,如 @linxin666/dsh-ssh)
+  更新插件.cmd   更新全部插件(含以后新装的,无需修改脚本)
+  更新DSH.cmd    更新 dsh 引擎(不影响 data 数据)
+
+执行后:托盘图标右键 → 退出 → 重新打开应用生效。
+插件位置:安装目录\data\profiles\web\。
+插件报 ERR_PNPM_IGNORED_BUILDS 时:编辑该目录下
+pnpm-workspace.yaml 的 allowBuilds,把对应包设为 true 后重试。
