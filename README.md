@@ -1,5 +1,7 @@
 # dsh-web-portable
 
+[English](README.en.md) | 中文
+
 DeepSeek Harness Web 便携版 —— 第三方整合打包项目(非官方)
 
 把 DeepSeek Harness 与其运行所需的一切(Node.js、Electron、全部依赖)
