@@ -198,7 +198,7 @@ namespace DSHInstaller
                 lnk.IconLocation = icon;
                 lnk.Save();
                 lnk = shell.CreateShortcut(Path.Combine(sm, "卸载 DSH.lnk"));
-                lnk.TargetPath = Path.Combine(dir, "uninstall.cmd");
+                lnk.TargetPath = Path.Combine(dir, "uninstall.exe");
                 lnk.WorkingDirectory = dir;
                 lnk.IconLocation = icon;
                 lnk.Save();
