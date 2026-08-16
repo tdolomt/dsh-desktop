@@ -348,8 +348,6 @@ namespace DSHInstaller
         // ---------- layout ----------
         void BuildLayout()
         {
-            Controls.Add(MakeHeader());
-
             // step indicator (top-right of the content area)
             lblStep = MakeLabel("步骤 1 / 4", 9f, FontStyle.Regular, TextDim, new Point(560, 6));
 
@@ -463,6 +461,10 @@ namespace DSHInstaller
             Controls.Add(btnBack); Controls.Add(btnNext); Controls.Add(btnInstall);
             Controls.Add(btnCancel); Controls.Add(btnFinish);
             Controls.Add(page1); Controls.Add(page2); Controls.Add(page3); Controls.Add(page4);
+            // Header must be added last: docked controls are laid out in reverse
+            // order, so the last-added control docks first (top band) and the
+            // pages fill the space below it instead of being covered.
+            Controls.Add(MakeHeader());
         }
 
         void ShowPage(Panel p)
