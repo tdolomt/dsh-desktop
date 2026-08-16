@@ -427,6 +427,7 @@ namespace DSHInstaller
             lblFinishDir = MakeLabel("", 10f, FontStyle.Regular, TextMain, new Point(110, 132));
             page4.Controls.Add(MakeLabel("首次启动后请在 设置 → 模型 中配置 API Key。", 10f, FontStyle.Regular, TextDim, new Point(36, 166)));
             page4.Controls.Add(MakeLabel("数据保存在安装目录 data\\ 下;卸载请运行「卸载 DSH」。", 10f, FontStyle.Regular, TextDim, new Point(36, 192)));
+            page4.Controls.Add(MakeLabel("提示:首次启动会稍慢(正在初始化),属正常现象。", 9.5f, FontStyle.Regular, Color.FromArgb(0xB4, 0x77, 0x1E), new Point(36, 218)));
             chkLaunch = new CheckBox
             {
                 Text = "立即启动 DeepSeek Harness",

@@ -93,7 +93,7 @@ namespace DSHUninstaller
         Panel page1, page2;
         Button btnUninstall, btnCancel, btnFinish;
         ProgressBar progress;
-        Label lblStatus, lblStep;
+        Label lblStatus, lblStep, lblDoneCheck, lblDoneTitle, lblDoneNote;
         CheckBox chkExtra;
 
         public MainForm()
@@ -225,7 +225,20 @@ namespace DSHUninstaller
 
             // --- page 2: progress / done ---
             page2 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
-            page2.Controls.Add(MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 26)));
+            lblDoneCheck = MakeLabel("✓", 40f, FontStyle.Bold, Color.FromArgb(0x2E, 0x9E, 0x5B), new Point(36, 24));
+            lblDoneCheck.Visible = false;
+            lblDoneTitle = MakeLabel("卸载完成", 17f, FontStyle.Bold, TextMain, new Point(112, 38));
+            lblDoneTitle.Visible = false;
+            lblDoneNote = new Label
+            {
+                Text = "DeepSeek Harness 已成功卸载,安装目录已清理。\r\n残留文件将在窗口关闭后自动清除。",
+                Font = new Font("Microsoft YaHei UI", 10f),
+                ForeColor = TextDim,
+                Location = new Point(112, 76),
+                AutoSize = true,
+                Visible = false
+            };
+            var l0 = MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 26));
             progress = new ProgressBar
             {
                 Location = new Point(36, 100), Size = new Size(548, 18),
@@ -238,7 +251,8 @@ namespace DSHUninstaller
                 Font = new Font("Microsoft YaHei UI", 9.5f),
                 ForeColor = TextDim
             };
-            page2.Controls.Add(progress); page2.Controls.Add(lblStatus);
+            page2.Controls.Add(lblDoneCheck); page2.Controls.Add(lblDoneTitle); page2.Controls.Add(lblDoneNote);
+            page2.Controls.Add(l0); page2.Controls.Add(progress); page2.Controls.Add(lblStatus);
             page2.Controls.Add(lblStep);
 
             btnUninstall = MakePrimaryButton("卸载", new Point(392, 356), Color.FromArgb(0xC0, 0x39, 0x2B));
@@ -281,34 +295,48 @@ namespace DSHUninstaller
                 try
                 {
                     // 1. shortcuts
-                    bgw.ReportProgress(10, "正在删除快捷方式...");
+                    bgw.ReportProgress(5, "正在删除快捷方式...");
                     string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                     string publicDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
                     TryDelete(Path.Combine(desktop, "DSH Web.lnk"));
                     TryDelete(Path.Combine(publicDesktop, "DSH Web.lnk"));
                     string sm = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "DeepSeek Harness");
                     TryDeleteDir(sm);
+                    bgw.ReportProgress(12, "快捷方式已删除");
 
                     // 2. custom data dir (opt-in)
                     if (chkExtra.Checked && Program.ExtraDir != null)
                     {
-                        bgw.ReportProgress(40, "正在删除自定义数据目录...");
+                        bgw.ReportProgress(18, "正在删除自定义数据目录...");
                         TryDeleteDir(Program.ExtraDir);
+                        bgw.ReportProgress(24, "数据目录已删除");
                     }
 
-                    // 3. schedule removal of the whole install dir (this exe lives inside it)
-                    bgw.ReportProgress(70, "正在清理安装目录...");
+                    // 3. delete the install directory contents in-process
+                    bgw.ReportProgress(28, "正在清理安装目录...");
+                    long total = CountFiles(Program.RootDir);
+                    long done = 0;
+                    DeleteContents(Program.RootDir, Application.ExecutablePath,
+                        (d, t) =>
+                        {
+                            done = d;
+                            int pct = 28 + (int)(62 * Math.Min(1.0, (double)d / Math.Max(1, t)));
+                            bgw.ReportProgress(Math.Min(pct, 90), "正在删除文件...");
+                        });
+                    bgw.ReportProgress(92, "正在完成清理...");
+
+                    // 4. schedule removal of the leftover folder (contains this exe)
                     string helper = Path.Combine(Path.GetTempPath(), "dsh_ur_rm_" + Guid.NewGuid().ToString("N").Substring(0, 8) + ".cmd");
                     using (var w = new StreamWriter(helper, false, System.Text.Encoding.ASCII))
                     {
                         w.WriteLine("@echo off");
                         w.WriteLine("cd /d \"" + Path.GetTempPath() + "\"");
-                        w.WriteLine("ping -n 4 127.0.0.1 >nul");
+                        w.WriteLine("ping -n 3 127.0.0.1 >nul");
                         w.WriteLine("rmdir /s /q \"" + Program.RootDir + "\"");
                         w.WriteLine("del \"" + helper + "\"");
                     }
                     Process.Start(new ProcessStartInfo(helper) { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
-                    bgw.ReportProgress(100, "卸载完成。");
+                    bgw.ReportProgress(100, "卸载完成");
                 }
                 catch (Exception ex)
                 {
@@ -319,9 +347,45 @@ namespace DSHUninstaller
             {
                 done = true;
                 progress.Value = 100;
-                lblStatus.Text = "DeepSeek Harness 已卸载。安装目录将在几秒内自动删除。";
+                lblStatus.Text = "";
+                lblDoneCheck.Visible = true;
+                lblDoneTitle.Visible = true;
+                lblDoneNote.Visible = true;
                 ShowPage(page2);
             };
+        }
+
+        static long CountFiles(string dir)
+        {
+            try { return Directory.GetFiles(dir, "*", SearchOption.AllDirectories).Length; }
+            catch { return 1; }
+        }
+
+        static void DeleteContents(string dir, string keep, Action<long, long> progress, ref long done, long total)
+        {
+            foreach (string f in Directory.GetFiles(dir))
+            {
+                if (keep != null && string.Equals(f, keep, StringComparison.OrdinalIgnoreCase)) { done++; continue; }
+                try { File.Delete(f); } catch { }
+                done++;
+                progress(done, total);
+            }
+            foreach (string d in Directory.GetDirectories(dir))
+            {
+                try
+                {
+                    DeleteContents(d, keep, progress, ref done, total);
+                    Directory.Delete(d);
+                }
+                catch { }
+            }
+        }
+
+        static void DeleteContents(string dir, string keep, Action<long, long> progress)
+        {
+            long done = 0;
+            long total = CountFiles(dir);
+            DeleteContents(dir, keep, progress, ref done, total);
         }
 
         static void TryDelete(string path)
