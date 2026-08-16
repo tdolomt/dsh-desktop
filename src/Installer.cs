@@ -131,9 +131,43 @@ namespace DSHInstaller
             int rc = ExtractPayload(dir, null);
             if (rc == -1) { Console.WriteLine("PAYLOAD_MISSING"); return 4; }
             if (rc != 0) { Console.WriteLine("PAYLOAD_FAIL"); return 4; }
+            FixProfileStore(dir);
             CreateShortcuts(dir, false);
             Console.WriteLine("INSTALL_OK " + dir);
             return 0;
+        }
+
+        // Re-run `pnpm install` inside the web profile so pnpm's virtual-store
+        // metadata points at THIS machine's install path (the shipped copy
+        // records the packager's path). Non-fatal: the app still runs without
+        // it; a later plugin update would repair the profile anyway.
+        public static void FixProfileStore(string dir)
+        {
+            try
+            {
+                string profile = Path.Combine(dir, "data", "profiles", "web");
+                string nodeExe = Path.Combine(dir, "node", "node.exe");
+                string pnpmCjs = Path.Combine(dir, "global", "node_modules", "pnpm", "bin", "pnpm.cjs");
+                if (!File.Exists(nodeExe) || !File.Exists(pnpmCjs) || !File.Exists(Path.Combine(profile, "package.json"))) return;
+                var psi = new ProcessStartInfo(nodeExe, "\"" + pnpmCjs + "\" install")
+                {
+                    WorkingDirectory = profile,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+                psi.EnvironmentVariables["CI"] = "true";
+                psi.EnvironmentVariables["PATH"] =
+                    Path.Combine(dir, "node") + ";" + Path.Combine(dir, "global") + ";" +
+                    (psi.EnvironmentVariables["PATH"] ?? "");
+                using (Process p = Process.Start(psi))
+                {
+                    p.WaitForExit(240000);
+                }
+            }
+            catch { /* non-fatal */ }
         }
 
         public static void CreateShortcuts(string dir, bool startApp)
@@ -392,6 +426,8 @@ namespace DSHInstaller
                 }
                 progress.Value = 100;
                 lblProgress.Text = "100%";
+                lblStatus.Text = "正在关联插件依赖...";
+                Program.FixProfileStore(txtDir.Text.Trim());
                 Program.CreateShortcuts(txtDir.Text.Trim(), chkLaunch.Checked);
                 ShowPage(page4);
             };
