@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -221,75 +222,165 @@ namespace DSHInstaller
     class MainForm : Form
     {
         public int Result = 1;
+
+        // palette
+        static readonly Color Accent = Color.FromArgb(0x2B, 0x7C, 0xD9);
+        static readonly Color AccentDark = Color.FromArgb(0x1E, 0x63, 0xB8);
+        static readonly Color HeaderTop = Color.FromArgb(0x12, 0x30, 0x5E);
+        static readonly Color HeaderBottom = Color.FromArgb(0x2B, 0x7C, 0xD9);
+        static readonly Color BorderGray = Color.FromArgb(0xD8, 0xDE, 0xE4);
+        static readonly Color TextMain = Color.FromArgb(0x24, 0x2A, 0x30);
+        static readonly Color TextDim = Color.FromArgb(0x6B, 0x74, 0x80);
+        static readonly Color OkGreen = Color.FromArgb(0x2E, 0x9E, 0x5B);
+
         Panel page1, page2, page3, page4;
         Button btnNext, btnBack, btnInstall, btnBrowse, btnFinish, btnCancel;
         TextBox txtDir;
         ProgressBar progress;
-        Label lblStatus, lblProgress;
+        Label lblStatus, lblProgress, lblStep;
         CheckBox chkLaunch;
+        Label lblFinishDir;
 
         public MainForm()
         {
             Text = "DeepSeek Harness 安装程序";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
-            ClientSize = new Size(560, 380);
+            MinimizeBox = false;
+            ClientSize = new Size(660, 440);
             StartPosition = FormStartPosition.CenterScreen;
+            BackColor = Color.White;
+            try { Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
             wireBg();
 
-            BuildPages();
+            BuildLayout();
             ShowPage(page1);
         }
 
-        void BuildPages()
+        // ---------- visual helpers ----------
+        static Label MakeLabel(string text, float size, FontStyle style, Color color, Point loc)
         {
+            return new Label
+            {
+                Text = text,
+                Font = new Font("Microsoft YaHei UI", size, style),
+                ForeColor = color,
+                Location = loc,
+                AutoSize = true,
+                BackColor = Color.Transparent
+            };
+        }
+
+        static Button MakePrimaryButton(string text, Point loc)
+        {
+            var b = new Button
+            {
+                Text = text,
+                Location = loc,
+                Size = new Size(104, 34),
+                Font = new Font("Microsoft YaHei UI", 9.5f, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Accent,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+            b.FlatAppearance.BorderSize = 0;
+            b.FlatAppearance.MouseOverBackColor = AccentDark;
+            return b;
+        }
+
+        static Button MakeSecondaryButton(string text, Point loc)
+        {
+            var b = new Button
+            {
+                Text = text,
+                Location = loc,
+                Size = new Size(104, 34),
+                Font = new Font("Microsoft YaHei UI", 9.5f),
+                ForeColor = TextMain,
+                BackColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+            b.FlatAppearance.BorderSize = 1;
+            b.FlatAppearance.BorderColor = BorderGray;
+            b.FlatAppearance.MouseOverBackColor = Color.FromArgb(0xF2, 0xF6, 0xFA);
+            return b;
+        }
+
+        Panel MakeHeader()
+        {
+            var h = new Panel { Dock = DockStyle.Top, Height = 68 };
+            h.Paint += (s, e) =>
+            {
+                using (var br = new LinearGradientBrush(h.ClientRectangle, HeaderTop, HeaderBottom, 0f))
+                    e.Graphics.FillRectangle(br, h.ClientRectangle);
+                try
+                {
+                    var icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+                    e.Graphics.DrawIcon(icon, new Rectangle(16, 16, 36, 36));
+                }
+                catch { }
+            };
+            var t = new Label
+            {
+                Text = "DeepSeek Harness",
+                Font = new Font("Microsoft YaHei UI", 15, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                Location = new Point(64, 12),
+                AutoSize = true
+            };
+            var sub = new Label
+            {
+                Text = "安装程序  ·  v1.0.0",
+                Font = new Font("Microsoft YaHei UI", 9f),
+                ForeColor = Color.FromArgb(0xC9, 0xDD, 0xF4),
+                BackColor = Color.Transparent,
+                Location = new Point(65, 40),
+                AutoSize = true
+            };
+            h.Controls.Add(t);
+            h.Controls.Add(sub);
+            return h;
+        }
+
+        // ---------- layout ----------
+        void BuildLayout()
+        {
+            Controls.Add(MakeHeader());
+
+            // step indicator (top-right of the content area)
+            lblStep = MakeLabel("步骤 1 / 4", 9f, FontStyle.Regular, TextDim, new Point(560, 6));
+
             // --- page 1: welcome ---
-            page1 = new Panel { Dock = DockStyle.Fill };
-            var title = new Label
-            {
-                Text = "欢迎安装 DeepSeek Harness",
-                Font = new Font("Microsoft YaHei", 16, FontStyle.Bold),
-                Location = new Point(30, 24), AutoSize = true
-            };
-            var info = new TextBox
-            {
-                Multiline = true, ReadOnly = true, ScrollBars = ScrollBars.Vertical,
-                Location = new Point(30, 70), Size = new Size(500, 210),
-                Font = new Font("Microsoft YaHei", 10),
-                Text =
-                    "DeepSeek Harness 桌面版:一个独立的应用窗口,无需浏览器。\r\n\r\n" +
-                    "本安装包已内置全部组件:\r\n" +
-                    "  · Electron 桌面运行时\r\n  · Node.js 运行时\r\n  · dsh 引擎与全部依赖\r\n  · 插件(任务看板 / 宠物 / 实时统计 / 皮肤中心)\r\n\r\n" +
-                    "安装特点:\r\n" +
-                    "  · 所有文件只安装在所选目录内,不写注册表\r\n  · 数据(配置/会话)默认保存在安装目录 data\\ 下\r\n  · 卸载:运行安装目录 uninstall.cmd 一键清理\r\n\r\n" +
-                    "点击「下一步」选择安装位置。"
-            };
-            page1.Controls.Add(title); page1.Controls.Add(info);
+            page1 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
+            page1.Controls.Add(MakeLabel("欢迎安装 DeepSeek Harness", 17f, FontStyle.Bold, TextMain, new Point(36, 28)));
+            page1.Controls.Add(MakeLabel("DeepSeek Harness 桌面版 — 独立应用窗口,无需浏览器。", 10f, FontStyle.Regular, TextDim, new Point(36, 64)));
+            page1.Controls.Add(MakeLabel("本安装包已内置全部组件:", 10f, FontStyle.Bold, TextMain, new Point(36, 100)));
+            page1.Controls.Add(MakeLabel("•  Electron 桌面运行时", 10f, FontStyle.Regular, TextMain, new Point(52, 128)));
+            page1.Controls.Add(MakeLabel("•  Node.js 运行时", 10f, FontStyle.Regular, TextMain, new Point(52, 154)));
+            page1.Controls.Add(MakeLabel("•  dsh 引擎与全部依赖", 10f, FontStyle.Regular, TextMain, new Point(52, 180)));
+            page1.Controls.Add(MakeLabel("•  插件(任务看板 / 宠物 / 实时统计 / 皮肤中心)", 10f, FontStyle.Regular, TextMain, new Point(52, 206)));
+            page1.Controls.Add(MakeLabel("安装特点:", 10f, FontStyle.Bold, TextMain, new Point(36, 244)));
+            page1.Controls.Add(MakeLabel("•  所有文件只安装在所选目录内,不写注册表", 10f, FontStyle.Regular, TextMain, new Point(52, 272)));
+            page1.Controls.Add(MakeLabel("•  数据(配置/会话)默认保存在安装目录 data\\ 下", 10f, FontStyle.Regular, TextMain, new Point(52, 298)));
+            page1.Controls.Add(MakeLabel("•  卸载:运行安装目录 uninstall.cmd 一键清理", 10f, FontStyle.Regular, TextMain, new Point(52, 324)));
+            page1.Controls.Add(lblStep);
 
             // --- page 2: install dir ---
-            page2 = new Panel { Dock = DockStyle.Fill };
-            var l2 = new Label
-            {
-                Text = "选择安装位置",
-                Font = new Font("Microsoft YaHei", 14, FontStyle.Bold),
-                Location = new Point(30, 24), AutoSize = true
-            };
-            var l3 = new Label
-            {
-                Text = "建议安装在非系统盘(默认 D:\\Program Files\\DSH)。\r\n可点击「浏览」选择文件夹,或直接在输入框键入路径。",
-                Font = new Font("Microsoft YaHei", 9),
-                Location = new Point(30, 66), AutoSize = true
-            };
+            page2 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
+            page2.Controls.Add(MakeLabel("选择安装位置", 17f, FontStyle.Bold, TextMain, new Point(36, 28)));
+            page2.Controls.Add(MakeLabel("建议安装在非系统盘(默认 D:\\Program Files\\DSH)。", 10f, FontStyle.Regular, TextDim, new Point(36, 68)));
+            page2.Controls.Add(MakeLabel("可点击「浏览」选择文件夹,或直接在输入框键入路径。", 10f, FontStyle.Regular, TextDim, new Point(36, 92)));
             txtDir = new TextBox
             {
                 Text = Program.FindInstallDir(),
-                Location = new Point(30, 110), Size = new Size(400, 24),
-                Font = new Font("Microsoft YaHei", 10)
+                Location = new Point(36, 130), Size = new Size(470, 28),
+                Font = new Font("Microsoft YaHei UI", 10.5f),
+                BorderStyle = BorderStyle.FixedSingle
             };
-            btnBrowse = new Button
-            {
-                Text = "浏览...", Location = new Point(438, 108), Size = new Size(90, 28)
-            };
+            btnBrowse = MakeSecondaryButton("浏览...", new Point(520, 128));
             btnBrowse.Click += (s, e) =>
             {
                 using (FolderBrowserDialog d = new FolderBrowserDialog())
@@ -299,53 +390,64 @@ namespace DSHInstaller
                     if (d.ShowDialog(this) == DialogResult.OK) txtDir.Text = d.SelectedPath;
                 }
             };
-            page2.Controls.Add(l2); page2.Controls.Add(l3); page2.Controls.Add(txtDir); page2.Controls.Add(btnBrowse);
+            var space = new Panel
+            {
+                Location = new Point(36, 176), Size = new Size(560, 60),
+                BackColor = Color.FromArgb(0xF6, 0xF9, 0xFC), BorderStyle = BorderStyle.FixedSingle
+            };
+            space.Controls.Add(MakeLabel("磁盘空间:安装后约需 1.5 GB", 9.5f, FontStyle.Regular, TextDim, new Point(12, 12)));
+            space.Controls.Add(MakeLabel("系统要求:Windows 10 / 11 64 位", 9.5f, FontStyle.Regular, TextDim, new Point(12, 34)));
+            page2.Controls.Add(txtDir); page2.Controls.Add(btnBrowse); page2.Controls.Add(space);
+            page2.Controls.Add(lblStep);
 
             // --- page 3: progress ---
-            page3 = new Panel { Dock = DockStyle.Fill };
-            var l4 = new Label
+            page3 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
+            page3.Controls.Add(MakeLabel("正在安装", 17f, FontStyle.Bold, TextMain, new Point(36, 28)));
+            page3.Controls.Add(MakeLabel("正在解压组件并完成配置,请稍候...", 10f, FontStyle.Regular, TextDim, new Point(36, 68)));
+            progress = new ProgressBar
             {
-                Text = "正在安装...",
-                Font = new Font("Microsoft YaHei", 14, FontStyle.Bold),
-                Location = new Point(30, 24), AutoSize = true
+                Location = new Point(36, 120), Size = new Size(588, 18),
+                Style = ProgressBarStyle.Continuous
             };
-            progress = new ProgressBar { Location = new Point(30, 80), Size = new Size(500, 22) };
-            lblProgress = new Label { Text = "0%", Location = new Point(500, 112), AutoSize = true, TextAlign = ContentAlignment.TopRight };
+            lblProgress = MakeLabel("0%", 10f, FontStyle.Bold, Accent, new Point(590, 146));
             lblStatus = new Label
             {
-                Text = "正在解压组件...", Location = new Point(30, 120), Size = new Size(500, 160),
-                Font = new Font("Microsoft YaHei", 9)
+                Text = "准备中...",
+                Location = new Point(36, 168), Size = new Size(588, 60),
+                Font = new Font("Microsoft YaHei UI", 9f),
+                ForeColor = TextDim
             };
-            page3.Controls.Add(l4); page3.Controls.Add(progress); page3.Controls.Add(lblProgress); page3.Controls.Add(lblStatus);
+            page3.Controls.Add(progress); page3.Controls.Add(lblProgress); page3.Controls.Add(lblStatus);
+            page3.Controls.Add(lblStep);
 
             // --- page 4: done ---
-            page4 = new Panel { Dock = DockStyle.Fill };
-            var l5 = new Label
-            {
-                Text = "安装完成",
-                Font = new Font("Microsoft YaHei", 16, FontStyle.Bold),
-                Location = new Point(30, 24), AutoSize = true
-            };
-            var l6 = new Label
-            {
-                Text = "DeepSeek Harness 已成功安装。\r\n\r\n首次启动后请在 设置 → 模型 中配置 API Key。\r\n\r\n提示:全部数据保存在安装目录 data\\ 下,\r\n卸载请运行开始菜单中的「卸载 DSH」。",
-                Font = new Font("Microsoft YaHei", 10),
-                Location = new Point(30, 70), Size = new Size(500, 100)
-            };
+            page4 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
+            page4.Controls.Add(MakeLabel("✓", 44f, FontStyle.Bold, OkGreen, new Point(40, 22)));
+            page4.Controls.Add(MakeLabel("安装完成", 17f, FontStyle.Bold, TextMain, new Point(96, 34)));
+            page4.Controls.Add(MakeLabel("DeepSeek Harness 已成功安装到您的电脑。", 10f, FontStyle.Regular, TextMain, new Point(96, 72)));
+            page4.Controls.Add(MakeLabel("安装目录:", 10f, FontStyle.Regular, TextDim, new Point(36, 130)));
+            lblFinishDir = MakeLabel("", 10f, FontStyle.Regular, TextMain, new Point(110, 130));
+            page4.Controls.Add(MakeLabel("首次启动后请在 设置 → 模型 中配置 API Key。", 10f, FontStyle.Regular, TextDim, new Point(36, 164)));
+            page4.Controls.Add(MakeLabel("数据保存在安装目录 data\\ 下;卸载请运行「卸载 DSH」。", 10f, FontStyle.Regular, TextDim, new Point(36, 190)));
             chkLaunch = new CheckBox
             {
-                Text = "立即启动 DeepSeek Harness", Font = new Font("Microsoft YaHei", 10),
-                Location = new Point(30, 180), AutoSize = true, Checked = true
+                Text = "立即启动 DeepSeek Harness",
+                Font = new Font("Microsoft YaHei UI", 10f),
+                ForeColor = TextMain,
+                Location = new Point(36, 236),
+                AutoSize = true,
+                Checked = true
             };
-            page4.Controls.Add(l5); page4.Controls.Add(l6); page4.Controls.Add(chkLaunch);
+            page4.Controls.Add(chkLaunch);
+            page4.Controls.Add(lblStep);
 
             // --- nav buttons ---
-            btnBack = new Button { Text = "< 上一步", Location = new Point(300, 320), Size = new Size(90, 30), Visible = false };
-            btnNext = new Button { Text = "下一步 >", Location = new Point(396, 320), Size = new Size(90, 30) };
-            btnInstall = new Button { Text = "安装", Location = new Point(396, 320), Size = new Size(90, 30), Visible = false };
-            btnCancel = new Button { Text = "取消", Location = new Point(200, 320), Size = new Size(90, 30), Visible = false };
-            btnFinish = new Button { Text = "完成", Location = new Point(396, 320), Size = new Size(90, 30), Visible = false };
-            btnBrowse.Enabled = true;
+            btnBack = MakeSecondaryButton("< 上一步", new Point(380, 396));
+            btnNext = MakePrimaryButton("下一步 >", new Point(492, 396));
+            btnInstall = MakePrimaryButton("安装", new Point(492, 396));
+            btnCancel = MakeSecondaryButton("取消", new Point(380, 396));
+            btnFinish = MakePrimaryButton("完成", new Point(492, 396));
+            btnBack.Visible = btnInstall.Visible = btnCancel.Visible = btnFinish.Visible = false;
 
             btnNext.Click += (s, e) => { ShowPage(page2); };
             btnBack.Click += (s, e) => { ShowPage(page1); };
@@ -372,6 +474,11 @@ namespace DSHInstaller
             btnInstall.Visible = (p == page2);
             btnCancel.Visible = (p == page3);
             btnFinish.Visible = (p == page4);
+            lblStep.Text = p == page1 ? "步骤 1 / 4 · 欢迎"
+                        : p == page2 ? "步骤 2 / 4 · 安装位置"
+                        : p == page3 ? "步骤 3 / 4 · 安装中"
+                        : "步骤 4 / 4 · 完成";
+            if (p == page4) lblFinishDir.Text = txtDir.Text.Trim();
         }
 
         void StartInstall()
