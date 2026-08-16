@@ -420,19 +420,19 @@ namespace DSHInstaller
 
             // --- page 4: done ---
             page4 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
-            page4.Controls.Add(MakeLabel("✓", 44f, FontStyle.Bold, OkGreen, new Point(40, 22)));
-            page4.Controls.Add(MakeLabel("安装完成", 17f, FontStyle.Bold, TextMain, new Point(96, 34)));
-            page4.Controls.Add(MakeLabel("DeepSeek Harness 已成功安装到您的电脑。", 10f, FontStyle.Regular, TextMain, new Point(96, 72)));
-            page4.Controls.Add(MakeLabel("安装目录:", 10f, FontStyle.Regular, TextDim, new Point(36, 130)));
-            lblFinishDir = MakeLabel("", 10f, FontStyle.Regular, TextMain, new Point(110, 130));
-            page4.Controls.Add(MakeLabel("首次启动后请在 设置 → 模型 中配置 API Key。", 10f, FontStyle.Regular, TextDim, new Point(36, 164)));
-            page4.Controls.Add(MakeLabel("数据保存在安装目录 data\\ 下;卸载请运行「卸载 DSH」。", 10f, FontStyle.Regular, TextDim, new Point(36, 190)));
+            page4.Controls.Add(MakeLabel("✓", 40f, FontStyle.Bold, OkGreen, new Point(36, 24)));
+            page4.Controls.Add(MakeLabel("安装完成", 17f, FontStyle.Bold, TextMain, new Point(112, 38)));
+            page4.Controls.Add(MakeLabel("DeepSeek Harness 已成功安装到您的电脑。", 10f, FontStyle.Regular, TextMain, new Point(112, 76)));
+            page4.Controls.Add(MakeLabel("安装目录:", 10f, FontStyle.Regular, TextDim, new Point(36, 132)));
+            lblFinishDir = MakeLabel("", 10f, FontStyle.Regular, TextMain, new Point(110, 132));
+            page4.Controls.Add(MakeLabel("首次启动后请在 设置 → 模型 中配置 API Key。", 10f, FontStyle.Regular, TextDim, new Point(36, 166)));
+            page4.Controls.Add(MakeLabel("数据保存在安装目录 data\\ 下;卸载请运行「卸载 DSH」。", 10f, FontStyle.Regular, TextDim, new Point(36, 192)));
             chkLaunch = new CheckBox
             {
                 Text = "立即启动 DeepSeek Harness",
                 Font = new Font("Microsoft YaHei UI", 10f),
                 ForeColor = TextMain,
-                Location = new Point(36, 236),
+                Location = new Point(36, 238),
                 AutoSize = true,
                 Checked = true
             };

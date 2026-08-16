@@ -307,7 +307,7 @@ namespace DSHUninstaller
                         w.WriteLine("rmdir /s /q \"" + Program.RootDir + "\"");
                         w.WriteLine("del \"" + helper + "\"");
                     }
-                    Process.Start(new ProcessStartInfo(helper) { UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo(helper) { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
                     bgw.ReportProgress(100, "卸载完成。");
                 }
                 catch (Exception ex)
