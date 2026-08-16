@@ -21,8 +21,24 @@ namespace DSHUninstaller
             // args[0] is the install directory to remove entirely.
             if (args.Length > 0 && args[0].Length > 3 && Directory.Exists(args[0]))
             {
-                Thread.Sleep(1200);
-                try { Directory.Delete(args[0], true); } catch { }
+                string target = args[0];
+                bool elevatedCopy = Array.IndexOf(args, "--elevated") >= 0;
+                if (!elevatedCopy && !CanWrite(Path.GetDirectoryName(target)))
+                {
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo(Application.ExecutablePath, "\"" + target + "\" --elevated") { Verb = "runas", UseShellExecute = true });
+                        return 0;
+                    }
+                    catch { /* elevation unavailable - retry below */ }
+                }
+                // retry loop: handles locked files (e.g. the app still running)
+                for (int i = 0; i < 12; i++)
+                {
+                    try { if (Directory.Exists(target)) Directory.Delete(target, true); } catch { }
+                    if (!Directory.Exists(target)) break;
+                    Thread.Sleep(2000);
+                }
                 try
                 {
                     Process.Start(new ProcessStartInfo("cmd.exe",
@@ -241,7 +257,7 @@ namespace DSHUninstaller
 
             // --- page 2: progress / done (in-place transition) ---
             page2 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
-            lblTitle = MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 26));
+            lblTitle = MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 48));
             progress = new ProgressBar
             {
                 Location = new Point(36, 100), Size = new Size(548, 18),
@@ -314,26 +330,51 @@ namespace DSHUninstaller
                         bgw.ReportProgress(24, "数据目录已删除");
                     }
 
-                    // 3. delete the install directory contents in-process
+                    // 3. delete the install directory contents in-process (best effort)
                     bgw.ReportProgress(28, "正在清理安装目录...");
-                    long total = CountFiles(Program.RootDir);
-                    long done = 0;
-                    DeleteContents(Program.RootDir, Application.ExecutablePath,
-                        (d, t) =>
-                        {
-                            done = d;
-                            int pct = 28 + (int)(62 * Math.Min(1.0, (double)d / Math.Max(1, t)));
-                            bgw.ReportProgress(Math.Min(pct, 90), "正在删除文件...");
-                        });
+                    try
+                    {
+                        long total = CountFiles(Program.RootDir);
+                        long done = 0;
+                        DeleteContents(Program.RootDir, Application.ExecutablePath,
+                            (d, t) =>
+                            {
+                                done = d;
+                                int pct = 28 + (int)(62 * Math.Min(1.0, (double)d / Math.Max(1, t)));
+                                bgw.ReportProgress(Math.Min(pct, 90), "正在删除文件...");
+                            });
+                    }
+                    catch { /* continue - cleanup copy will retry */ }
                     bgw.ReportProgress(92, "正在完成清理...");
 
-                    // 4. schedule removal of the leftover folder (contains this exe)
-                    // A copy of this exe in %TEMP% deletes the whole install dir,
-                    // then removes itself — no console windows involved.
+                    // 4. schedule removal of the leftover folder (contains this exe).
+                    // A hidden copy of this exe in %TEMP% deletes the whole install
+                    // dir (with elevation + retries), then removes itself.
                     string copy = Path.Combine(Path.GetTempPath(), "dsh_cleanup_" + Guid.NewGuid().ToString("N").Substring(0, 8) + ".exe");
-                    File.Copy(Application.ExecutablePath, copy, true);
-                    Process.Start(new ProcessStartInfo(copy, "\"" + Program.RootDir + "\"")
-                    { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
+                    try
+                    {
+                        File.Copy(Application.ExecutablePath, copy, true);
+                        Process.Start(new ProcessStartInfo(copy, "\"" + Program.RootDir + "\"")
+                        { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
+                    }
+                    catch
+                    {
+                        // fallback: console helper (hidden) if the copy failed
+                        string helper = Path.Combine(Path.GetTempPath(), "dsh_ur_rm_" + Guid.NewGuid().ToString("N").Substring(0, 8) + ".cmd");
+                        try
+                        {
+                            using (var w = new StreamWriter(helper, false, System.Text.Encoding.ASCII))
+                            {
+                                w.WriteLine("@echo off");
+                                w.WriteLine("cd /d \"" + Path.GetTempPath() + "\"");
+                                w.WriteLine("ping -n 3 127.0.0.1 >nul");
+                                w.WriteLine("rmdir /s /q \"" + Program.RootDir + "\"");
+                                w.WriteLine("del \"" + helper + "\"");
+                            }
+                            Process.Start(new ProcessStartInfo(helper) { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
+                        }
+                        catch { }
+                    }
                     bgw.ReportProgress(100, "卸载完成");
                 }
                 catch (Exception ex)
