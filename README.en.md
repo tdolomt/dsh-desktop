@@ -73,8 +73,9 @@ Output: `DSH-Web-1.0.0.zip` (installer + encrypted payload + docs).
 - Source code and build scripts only; large artifacts (payload, zip) are
   published as **GitHub Release assets** (up to 2 GB per file)
 - `rebuild.cmd` uses relative paths — clone anywhere and run
-- License: Apache-2.0 (same as DeepSeek Harness; bundled components remain
-  the property of their respective owners)
+- License: this repository is **MIT Licensed** (see LICENSE); bundled
+  components belong to their respective owners (DeepSeek Harness: MIT;
+  bundled plugins: Apache-2.0)
 
 ## Credits & plugin sources
 

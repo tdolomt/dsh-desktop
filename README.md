@@ -68,7 +68,8 @@ rebuild.cmd
 - 本仓库只含**源码与构建脚本**;巨型产物(payload、zip)以
   GitHub Releases 附件形式发布(单文件上限 2GB)
 - `rebuild.cmd` 使用相对路径,clone 到任意位置即可运行
-- 许可:Apache-2.0(与 DeepSeek Harness 一致;内置组件版权归各自所有者)
+- 许可:本仓库代码采用 **MIT License**(见 LICENSE);
+  内置组件版权归各自所有者(DeepSeek Harness:MIT;内置插件:Apache-2.0)
 
 ## 致谢与插件来源
 
