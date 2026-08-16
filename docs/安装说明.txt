@@ -1,0 +1,116 @@
+
+一、本包内容
+------------
+DSH-Installer-Stub.exe   安装程序(双击运行)
+payload.dat              加密的核心数据(请勿修改或删除)
+docs\
+  安装说明.txt           本说明
+  免责声明.txt           使用前请阅读
+注意:DSH-Installer-Stub.exe 与 payload.dat 必须放在同一目录。
+
+二、安装
+------------
+1. 双击 DSH-Installer-Stub.exe
+
+安装后的目录结构(以安装到 D:\DSH 为例):
+  D:\DSH\
+    app\       应用外壳
+    electron\  Electron 桌面运行时
+    node\      Node.js 运行时(含 npm)
+    global\    dsh 引擎与全部依赖
+    cache\     npm 缓存
+    data\      数据:配置/凭证/会话/插件
+    README.txt 完整说明书
+    uninstall.cmd  卸载入口
+
+三、首次使用
+------------
+1. 配置 API Key:应用内 设置 → 模型 → 填入 DeepSeek API Key
+   (申请:platform.deepseek.com)
+2. 选择工作区:设置 → 工作区 → 选择项目文件夹
+3. 日常使用:双击桌面快捷方式「DSH Web」启动;
+   关闭窗口 = 后台运行(托盘图标仍在,点击恢复);
+   托盘右键「退出」才完全停止。
+
+四、更新 DSH 引擎
+------------
+在安装目录打开 cmd,执行:
+
+  cd /d D:\DSH
+  set PATH=%CD%\node;%CD%\global;%PATH%
+  set npm_config_prefix=%CD%\global
+  set npm_config_cache=%CD%\cache
+  set DSH_HOME=%CD%\data
+  npm i -g @deepseek-ai/dsh@latest --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs
+
+完成后重启应用。data 目录(会话/配置)不受影响。
+提示:dsh 处于快速迭代期,更新前建议先备份 data 目录。
+
+五、更新 Node 运行时
+--------------------
+本包内置 Node.js 26.7(满足 dsh 要求 ^22.19 / >=24)。如需更新:
+1. 到 nodejs.org 下载新版 Windows x64 zip
+2. 备份安装目录的 node 文件夹
+3. 解压新 Node,把内容覆盖到 安装目录\node
+4. 重启应用,验证:安装目录\node\node.exe -v
+
+(仅当 dsh 新版本要求更高 Node 时才需要;日常更新 dsh 即可,
+Node 无需频繁升级。)
+
+六、插件管理
+------------
+插件位于 安装目录\data\profiles\web\(随数据同区,更新引擎不影响)。
+
+已内置插件:任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心(10 款皮肤)。
+
+安装新插件(在安装目录打开 cmd):
+
+  cd /d D:\DSH
+  set PATH=%CD%\node;%CD%\global;%PATH%
+  set npm_config_prefix=%CD%\global
+  set npm_config_cache=%CD%\cache
+  set DSH_HOME=%CD%\data
+  dsh plugin --profile web add <插件包名>
+
+更新全部插件:
+  dsh plugin --profile web update
+强制更新到最新版:
+  dsh plugin --profile web up --latest
+
+常用插件包名:
+  @linxin666/dsh-client-ui-task-board   任务看板
+  @linxin666/dsh-pet                   鲸鱼娘宠物
+  @linxin666/dsh-live-stats            实时令牌统计
+  @linxin666/dsh-skins                 皮肤中心全家桶
+  @linxin666/dsh-ssh                   远程 SSH 连接
+
+插件装不上(报 ERR_PNPM_IGNORED_BUILDS):
+  编辑 安装目录\data\profiles\web\pnpm-workspace.yaml,
+  在 allowBuilds 下把对应包设为 true(或明确 false)后重试。
+
+七、数据备份与迁移
+------------------
+- 换电脑:整个安装目录拷贝过去即可运行(目录内自包含)
+- 只迁移数据:拷贝安装目录下的 data 文件夹
+- 数据默认在安装目录 data\;如需放别处,编辑 datadir.ini
+  (把完整路径写为第一行非注释内容),重启生效
+
+八、卸载
+--------
+运行 安装目录\uninstall.cmd(或开始菜单「卸载 DSH」),会:
+  1. 删除桌面快捷方式「DSH Web」
+  2. 询问是否删除自定义数据目录(若配置了 datadir.ini)
+  3. 删除整个安装目录(含全部数据与插件)
+也可直接删除整个安装目录(绿色软件,无注册表残留)。
+
+九、常见问题
+------------
+Q: 提示端口 3080 被占用 / 启动超时?
+A: 其他 dsh 实例正在运行,先关闭再启动。
+
+Q: 启动失败?
+A: 查看 安装目录\data\logs\dsh-web.log。
+
+Q: 更新后界面/插件异常?
+A: dsh 处于 RC 阶段可能有不兼容变更:先备份 data,
+   再重新运行本安装包安装到同一位置。

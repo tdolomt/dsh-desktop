@@ -1,0 +1,8 @@
+# build artifacts
+packer.exe
+DSH-Installer-Stub.exe
+payload.dat
+DSH-Web-*.zip
+
+# payload kit (assembled from a live dsh environment, not shipped in git)
+DSH-Portable/
