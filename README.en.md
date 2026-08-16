@@ -46,6 +46,7 @@ After installation, the install directory ships three maintenance scripts
 | Script | Purpose |
 |---|---|
 | `安装插件.cmd` | Install a new plugin (enter the package name when prompted) |
+| `卸载插件.cmd` | Uninstall a plugin (cleans the bundle references too) |
 | `更新插件.cmd` | Update **all** Web UI plugins (new ones included) |
 | `更新DSH.cmd` | Update the dsh engine (your data is not touched) |
 | `导出数据.cmd` | Export credentials/sessions/settings/plugin config to a zip (desktop) |
