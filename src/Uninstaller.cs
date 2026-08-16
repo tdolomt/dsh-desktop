@@ -17,6 +17,22 @@ namespace DSHUninstaller
         [STAThread]
         static int Main(string[] args)
         {
+            // Cleanup mode: this copy was placed in %TEMP% by the uninstaller;
+            // args[0] is the install directory to remove entirely.
+            if (args.Length > 0 && args[0].Length > 3 && Directory.Exists(args[0]))
+            {
+                Thread.Sleep(1200);
+                try { Directory.Delete(args[0], true); } catch { }
+                try
+                {
+                    Process.Start(new ProcessStartInfo("cmd.exe",
+                        "/c ping -n 2 127.0.0.1 >nul & del \"" + Application.ExecutablePath + "\"")
+                    { UseShellExecute = false, CreateNoWindow = true, WindowStyle = ProcessWindowStyle.Hidden });
+                }
+                catch { }
+                return 0;
+            }
+
             bool elevated = false;
             foreach (string a in args)
                 if (a == "--elevated") elevated = true;
@@ -93,7 +109,7 @@ namespace DSHUninstaller
         Panel page1, page2;
         Button btnUninstall, btnCancel, btnFinish;
         ProgressBar progress;
-        Label lblStatus, lblStep, lblDoneCheck, lblDoneTitle, lblDoneNote;
+        Label lblStatus, lblStep, lblTitle;
         CheckBox chkExtra;
 
         public MainForm()
@@ -223,22 +239,9 @@ namespace DSHUninstaller
             page1.Controls.Add(MakeLabel("提示:卸载前建议先运行「导出数据.cmd」备份凭证与会话。", 9.5f, FontStyle.Regular, Color.FromArgb(0xB4, 0x77, 0x1E), new Point(36, 232)));
             page1.Controls.Add(lblStep);
 
-            // --- page 2: progress / done ---
+            // --- page 2: progress / done (in-place transition) ---
             page2 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
-            lblDoneCheck = MakeLabel("✓", 40f, FontStyle.Bold, Color.FromArgb(0x2E, 0x9E, 0x5B), new Point(36, 24));
-            lblDoneCheck.Visible = false;
-            lblDoneTitle = MakeLabel("卸载完成", 17f, FontStyle.Bold, TextMain, new Point(112, 38));
-            lblDoneTitle.Visible = false;
-            lblDoneNote = new Label
-            {
-                Text = "DeepSeek Harness 已成功卸载,安装目录已清理。\r\n残留文件将在窗口关闭后自动清除。",
-                Font = new Font("Microsoft YaHei UI", 10f),
-                ForeColor = TextDim,
-                Location = new Point(112, 76),
-                AutoSize = true,
-                Visible = false
-            };
-            var l0 = MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 26));
+            lblTitle = MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 26));
             progress = new ProgressBar
             {
                 Location = new Point(36, 100), Size = new Size(548, 18),
@@ -247,12 +250,11 @@ namespace DSHUninstaller
             lblStatus = new Label
             {
                 Text = "准备中...",
-                Location = new Point(36, 134), Size = new Size(548, 40),
+                Location = new Point(36, 134), Size = new Size(548, 60),
                 Font = new Font("Microsoft YaHei UI", 9.5f),
                 ForeColor = TextDim
             };
-            page2.Controls.Add(lblDoneCheck); page2.Controls.Add(lblDoneTitle); page2.Controls.Add(lblDoneNote);
-            page2.Controls.Add(l0); page2.Controls.Add(progress); page2.Controls.Add(lblStatus);
+            page2.Controls.Add(lblTitle); page2.Controls.Add(progress); page2.Controls.Add(lblStatus);
             page2.Controls.Add(lblStep);
 
             btnUninstall = MakePrimaryButton("卸载", new Point(392, 356), Color.FromArgb(0xC0, 0x39, 0x2B));
@@ -326,16 +328,12 @@ namespace DSHUninstaller
                     bgw.ReportProgress(92, "正在完成清理...");
 
                     // 4. schedule removal of the leftover folder (contains this exe)
-                    string helper = Path.Combine(Path.GetTempPath(), "dsh_ur_rm_" + Guid.NewGuid().ToString("N").Substring(0, 8) + ".cmd");
-                    using (var w = new StreamWriter(helper, false, System.Text.Encoding.ASCII))
-                    {
-                        w.WriteLine("@echo off");
-                        w.WriteLine("cd /d \"" + Path.GetTempPath() + "\"");
-                        w.WriteLine("ping -n 3 127.0.0.1 >nul");
-                        w.WriteLine("rmdir /s /q \"" + Program.RootDir + "\"");
-                        w.WriteLine("del \"" + helper + "\"");
-                    }
-                    Process.Start(new ProcessStartInfo(helper) { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
+                    // A copy of this exe in %TEMP% deletes the whole install dir,
+                    // then removes itself — no console windows involved.
+                    string copy = Path.Combine(Path.GetTempPath(), "dsh_cleanup_" + Guid.NewGuid().ToString("N").Substring(0, 8) + ".exe");
+                    File.Copy(Application.ExecutablePath, copy, true);
+                    Process.Start(new ProcessStartInfo(copy, "\"" + Program.RootDir + "\"")
+                    { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
                     bgw.ReportProgress(100, "卸载完成");
                 }
                 catch (Exception ex)
@@ -343,14 +341,19 @@ namespace DSHUninstaller
                     bgw.ReportProgress(100, "卸载过程中出现问题:" + ex.Message);
                 }
             };
+            bgw.ProgressChanged += (s, e) =>
+            {
+                if (progress.Value != e.ProgressPercentage) progress.Value = e.ProgressPercentage;
+                string txt = e.UserState as string;
+                if (!string.IsNullOrEmpty(txt)) lblStatus.Text = txt;
+            };
             bgw.RunWorkerCompleted += (s, e) =>
             {
                 done = true;
-                progress.Value = 100;
-                lblStatus.Text = "";
-                lblDoneCheck.Visible = true;
-                lblDoneTitle.Visible = true;
-                lblDoneNote.Visible = true;
+                lblTitle.Text = "✓ 卸载完成";
+                lblTitle.ForeColor = Color.FromArgb(0x2E, 0x9E, 0x5B);
+                progress.Visible = false;
+                lblStatus.Text = "DeepSeek Harness 已成功卸载,安装目录已清理。\r\n残留文件将在窗口关闭后自动清除。";
                 ShowPage(page2);
             };
         }

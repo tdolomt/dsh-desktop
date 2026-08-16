@@ -363,7 +363,7 @@ namespace DSHInstaller
             page1.Controls.Add(MakeLabel("安装特点:", 10f, FontStyle.Bold, TextMain, new Point(36, 244)));
             page1.Controls.Add(MakeLabel("•  所有文件只安装在所选目录内,不写注册表", 10f, FontStyle.Regular, TextMain, new Point(52, 272)));
             page1.Controls.Add(MakeLabel("•  数据(配置/会话)默认保存在安装目录 data\\ 下", 10f, FontStyle.Regular, TextMain, new Point(52, 298)));
-            page1.Controls.Add(MakeLabel("•  卸载:运行安装目录 uninstall.cmd 一键清理", 10f, FontStyle.Regular, TextMain, new Point(52, 324)));
+            page1.Controls.Add(MakeLabel("•  卸载:开始菜单「卸载 DSH」图形界面,一键清理", 10f, FontStyle.Regular, TextMain, new Point(52, 324)));
             page1.Controls.Add(lblStep);
 
             // --- page 2: install dir ---
