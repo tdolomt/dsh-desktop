@@ -18,5 +18,5 @@ cd /d "%CD%\data\profiles\web"
 pnpm install >nul 2>&1
 cd /d "%~dp0"
 echo.
-echo Restored! Please exit DSH Web from the tray and start it again.
+echo Restored! Please exit DSH Desktop from the tray and start it again.
 pause

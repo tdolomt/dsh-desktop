@@ -182,22 +182,22 @@ namespace DSHInstaller
                 string appDir = Path.Combine(dir, "app");
                 string icon = Path.Combine(dir, "app", "DSH.ico");
                 // desktop
-                dynamic lnk = shell.CreateShortcut(Path.Combine(desktop, "DSH Web.lnk"));
+                dynamic lnk = shell.CreateShortcut(Path.Combine(desktop, "DSH Desktop.lnk"));
                 lnk.TargetPath = appExe;
                 lnk.Arguments = "\"" + appDir + "\"";
                 lnk.WorkingDirectory = dir;
                 lnk.IconLocation = icon;
                 lnk.Save();
                 // start menu
-                string sm = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "DeepSeek Harness");
+                string sm = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "DSH Desktop");
                 Directory.CreateDirectory(sm);
-                lnk = shell.CreateShortcut(Path.Combine(sm, "DSH Web.lnk"));
+                lnk = shell.CreateShortcut(Path.Combine(sm, "DSH Desktop.lnk"));
                 lnk.TargetPath = appExe;
                 lnk.Arguments = "\"" + appDir + "\"";
                 lnk.WorkingDirectory = dir;
                 lnk.IconLocation = icon;
                 lnk.Save();
-                lnk = shell.CreateShortcut(Path.Combine(sm, "卸载 DSH.lnk"));
+                lnk = shell.CreateShortcut(Path.Combine(sm, "卸载 DSH Desktop.lnk"));
                 lnk.TargetPath = Path.Combine(dir, "uninstall.exe");
                 lnk.WorkingDirectory = dir;
                 lnk.IconLocation = icon;
@@ -243,7 +243,7 @@ namespace DSHInstaller
 
         public MainForm()
         {
-            Text = "DeepSeek Harness 安装程序";
+            Text = "DSH Desktop 安装程序";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -324,7 +324,7 @@ namespace DSHInstaller
             };
             var t = new Label
             {
-                Text = "DeepSeek Harness",
+                Text = "DSH Desktop",
                 Font = new Font("Microsoft YaHei UI", 15, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.Transparent,
@@ -353,8 +353,8 @@ namespace DSHInstaller
 
             // --- page 1: welcome ---
             page1 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
-            page1.Controls.Add(MakeLabel("欢迎安装 DeepSeek Harness", 17f, FontStyle.Bold, TextMain, new Point(36, 28)));
-            page1.Controls.Add(MakeLabel("DeepSeek Harness 桌面版 — 独立应用窗口,无需浏览器。", 10f, FontStyle.Regular, TextDim, new Point(36, 64)));
+            page1.Controls.Add(MakeLabel("欢迎安装 DSH Desktop", 17f, FontStyle.Bold, TextMain, new Point(36, 28)));
+            page1.Controls.Add(MakeLabel("DSH Desktop 桌面版 — 独立应用窗口,无需浏览器。", 10f, FontStyle.Regular, TextDim, new Point(36, 64)));
             page1.Controls.Add(MakeLabel("本安装包已内置全部组件:", 10f, FontStyle.Bold, TextMain, new Point(36, 100)));
             page1.Controls.Add(MakeLabel("•  Electron 桌面运行时", 10f, FontStyle.Regular, TextMain, new Point(52, 128)));
             page1.Controls.Add(MakeLabel("•  Node.js 运行时", 10f, FontStyle.Regular, TextMain, new Point(52, 154)));
@@ -363,7 +363,7 @@ namespace DSHInstaller
             page1.Controls.Add(MakeLabel("安装特点:", 10f, FontStyle.Bold, TextMain, new Point(36, 244)));
             page1.Controls.Add(MakeLabel("•  所有文件只安装在所选目录内,不写注册表", 10f, FontStyle.Regular, TextMain, new Point(52, 272)));
             page1.Controls.Add(MakeLabel("•  数据(配置/会话)默认保存在安装目录 data\\ 下", 10f, FontStyle.Regular, TextMain, new Point(52, 298)));
-            page1.Controls.Add(MakeLabel("•  卸载:开始菜单「卸载 DSH」图形界面,一键清理", 10f, FontStyle.Regular, TextMain, new Point(52, 324)));
+            page1.Controls.Add(MakeLabel("•  卸载:开始菜单「卸载 DSH Desktop」图形界面,一键清理", 10f, FontStyle.Regular, TextMain, new Point(52, 324)));
             page1.Controls.Add(lblStep);
 
             // --- page 2: install dir ---
@@ -422,15 +422,15 @@ namespace DSHInstaller
             page4 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
             page4.Controls.Add(MakeLabel("✓", 40f, FontStyle.Bold, OkGreen, new Point(36, 24)));
             page4.Controls.Add(MakeLabel("安装完成", 17f, FontStyle.Bold, TextMain, new Point(112, 38)));
-            page4.Controls.Add(MakeLabel("DeepSeek Harness 已成功安装到您的电脑。", 10f, FontStyle.Regular, TextMain, new Point(112, 76)));
+            page4.Controls.Add(MakeLabel("DSH Desktop 已成功安装到您的电脑。", 10f, FontStyle.Regular, TextMain, new Point(112, 76)));
             page4.Controls.Add(MakeLabel("安装目录:", 10f, FontStyle.Regular, TextDim, new Point(36, 132)));
             lblFinishDir = MakeLabel("", 10f, FontStyle.Regular, TextMain, new Point(110, 132));
             page4.Controls.Add(MakeLabel("首次启动后请在 设置 → 模型 中配置 API Key。", 10f, FontStyle.Regular, TextDim, new Point(36, 166)));
-            page4.Controls.Add(MakeLabel("数据保存在安装目录 data\\ 下;卸载请运行「卸载 DSH」。", 10f, FontStyle.Regular, TextDim, new Point(36, 192)));
+            page4.Controls.Add(MakeLabel("数据保存在安装目录 data\\ 下;卸载请运行「卸载 DSH Desktop」。", 10f, FontStyle.Regular, TextDim, new Point(36, 192)));
             page4.Controls.Add(MakeLabel("提示:首次启动会稍慢(正在初始化),属正常现象。", 9.5f, FontStyle.Regular, Color.FromArgb(0xB4, 0x77, 0x1E), new Point(36, 218)));
             chkLaunch = new CheckBox
             {
-                Text = "立即启动 DeepSeek Harness",
+                Text = "立即启动 DSH Desktop",
                 Font = new Font("Microsoft YaHei UI", 10f),
                 ForeColor = TextMain,
                 Location = new Point(36, 238),

@@ -13,5 +13,5 @@ set DSH_HOME=%CD%\data
 echo Updating DSH engine...
 npm i -g @deepseek-ai/dsh@latest --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs
 echo.
-echo Done. Please exit DSH Web from the tray and start it again.
+echo Done. Please exit DSH Desktop from the tray and start it again.
 pause

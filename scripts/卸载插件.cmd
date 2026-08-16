@@ -15,5 +15,5 @@ dsh plugin --profile web remove %PKG%
 rem Also drop it from the bundles list if it is still referenced there
 powershell -NoProfile -Command "$env:PKG='%PKG%'; $p='%CD%\data\profiles\web\package.json'; try { $j=Get-Content $p -Raw | ConvertFrom-Json; $b=@($j.dsh.profile.bundles | Where-Object { $_ -ne $env:PKG }); if($b.Count -ne $j.dsh.profile.bundles.Count){ $j.dsh.profile.bundles=$b; $j | ConvertTo-Json -Depth 10 | Set-Content $p -Encoding UTF8; 'bundles updated' } else { 'bundles already clean' } } catch { 'skip bundles cleanup' }"
 echo.
-echo Done. Please exit DSH Web from the tray and start it again.
+echo Done. Please exit DSH Desktop from the tray and start it again.
 pause

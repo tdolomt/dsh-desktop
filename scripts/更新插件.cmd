@@ -11,5 +11,5 @@ set DSH_HOME=%CD%\data
 echo Updating plugins...
 dsh plugin --profile web update
 echo.
-echo Done. Please exit DSH Web from the tray and start it again.
+echo Done. Please exit DSH Desktop from the tray and start it again.
 pause

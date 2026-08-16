@@ -16,6 +16,6 @@ if "%PKG%"=="" (echo No package entered. & pause & exit /b 1)
 echo Installing %PKG% ...
 dsh plugin --profile web add %PKG%
 echo.
-echo Done. Please exit DSH Web from the tray and start it again.
+echo Done. Please exit DSH Desktop from the tray and start it again.
 echo (New plugins show up under Settings - Plugin Config.)
 pause

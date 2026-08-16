@@ -136,7 +136,7 @@ namespace DSHUninstaller
 
         public MainForm()
         {
-            Text = "DeepSeek Harness 卸载程序";
+            Text = "DSH Desktop 卸载程序";
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
@@ -215,7 +215,7 @@ namespace DSHUninstaller
             };
             var t = new Label
             {
-                Text = "DeepSeek Harness",
+                Text = "DSH Desktop",
                 Font = new Font("Microsoft YaHei UI", 15, FontStyle.Bold),
                 ForeColor = Color.White,
                 BackColor = Color.Transparent,
@@ -240,7 +240,7 @@ namespace DSHUninstaller
         {
             // --- page 1: confirm ---
             page1 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
-            page1.Controls.Add(MakeLabel("卸载 DeepSeek Harness", 17f, FontStyle.Bold, TextMain, new Point(36, 26)));
+            page1.Controls.Add(MakeLabel("卸载 DSH Desktop", 17f, FontStyle.Bold, TextMain, new Point(36, 26)));
             page1.Controls.Add(MakeLabel("将删除以下内容:", 10f, FontStyle.Bold, TextMain, new Point(36, 68)));
             page1.Controls.Add(MakeLabel("•  桌面与开始菜单快捷方式", 10f, FontStyle.Regular, TextMain, new Point(52, 96)));
             page1.Controls.Add(MakeLabel("•  安装目录:" + Program.RootDir, 10f, FontStyle.Regular, TextMain, new Point(52, 124)));
@@ -317,9 +317,9 @@ namespace DSHUninstaller
                     bgw.ReportProgress(5, "正在删除快捷方式...");
                     string desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
                     string publicDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
-                    TryDelete(Path.Combine(desktop, "DSH Web.lnk"));
-                    TryDelete(Path.Combine(publicDesktop, "DSH Web.lnk"));
-                    string sm = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "DeepSeek Harness");
+                    TryDelete(Path.Combine(desktop, "DSH Desktop.lnk"));
+                    TryDelete(Path.Combine(publicDesktop, "DSH Desktop.lnk"));
+                    string sm = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "DSH Desktop");
                     TryDeleteDir(sm);
                     bgw.ReportProgress(12, "快捷方式已删除");
 
@@ -401,7 +401,7 @@ namespace DSHUninstaller
                 lblTitle.Text = "✓ 卸载完成";
                 lblTitle.ForeColor = Color.FromArgb(0x2E, 0x9E, 0x5B);
                 progress.Visible = false;
-                lblStatus.Text = "DeepSeek Harness 已成功卸载,安装目录已清理。\r\n残留文件将在窗口关闭后自动清除。";
+                lblStatus.Text = "DSH Desktop 已成功卸载,安装目录已清理。\r\n残留文件将在窗口关闭后自动清除。";
                 ShowPage(page2);
             };
         }

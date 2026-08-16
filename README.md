@@ -1,8 +1,8 @@
-# dsh-web-portable
+# dsh-desktop
 
 [English](README.en.md) | 中文
 
-DeepSeek Harness Web 便携版 —— 第三方整合打包项目(非官方)
+DSH Desktop —— DeepSeek Harness 便携桌面版(非官方整合)
 
 把 DeepSeek Harness 与其运行所需的一切(Node.js、Electron、全部依赖)
 打包为一个**自包含桌面应用**:一台全新 Windows 10/11 64 位电脑,
@@ -25,7 +25,7 @@ DeepSeek Harness Web 便携版 —— 第三方整合打包项目(非官方)
 
 ## 使用
 
-下载发行版:`DSH-Web-1.0.0.zip`(见 GitHub Releases 页)
+下载发行版:`DSH-Desktop-1.0.0.zip`(见 GitHub Releases 页)
 
 ```
 解压 → 双击 DSH-Installer-Stub.exe → 选择安装位置 → 完成
@@ -56,7 +56,7 @@ DeepSeek Harness Web 便携版 —— 第三方整合打包项目(非官方)
 ### 目录结构
 
 ```
-dsh-web-portable/
+dsh-desktop/
   src/             安装向导(Installer.cs)与加密打包器(Packer.cs)源码
   docs/            安装说明与免责声明
   DSH.ico          应用与安装器图标
@@ -79,7 +79,11 @@ dsh-web-portable/
 rebuild.cmd
 ```
 
+
 产物:`DSH-Web-1.0.0.zip`。
+
+产物:`DSH-Desktop-1.0.0.zip`(安装程序 + 加密数据包 + 文档)。
+
 
 ## 仓库内容说明
 

@@ -1,8 +1,8 @@
-# dsh-web-portable
+# dsh-desktop
 
 English | [中文](README.md)
 
-Portable desktop build of DeepSeek Harness Web — third-party packaging (unofficial)
+DSH Desktop — portable desktop build of DeepSeek Harness (unofficial)
 
 Bundles DeepSeek Harness with everything it needs (Node.js, Electron, all
 dependencies) into a **self-contained desktop app**: on a fresh Windows 10/11
@@ -29,7 +29,7 @@ dependencies) into a **self-contained desktop app**: on a fresh Windows 10/11
 
 ## Usage
 
-Download the release: `DSH-Web-1.0.0.zip` (see the Releases page)
+Download the release: `DSH-Desktop-1.0.0.zip` (see the Releases page)
 
 ```
 Unzip → run DSH-Installer-Stub.exe → choose install location → done
@@ -62,7 +62,7 @@ automatically.
 ### Layout
 
 ```
-dsh-web-portable/
+dsh-desktop/
   src/             Install wizard (Installer.cs) & encrypted packer (Packer.cs)
   docs/            Install guide & disclaimer
   DSH.ico          App and installer icon
@@ -85,7 +85,11 @@ dsh-web-portable/
 rebuild.cmd
 ```
 
+
 Output: `DSH-Web-1.0.0.zip` .
+
+Output: `DSH-Desktop-1.0.0.zip` (installer + encrypted payload + docs).
+
 
 ## Repository contents
 
