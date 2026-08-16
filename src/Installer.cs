@@ -132,7 +132,7 @@ namespace DSHInstaller
             if (rc == -1) { Console.WriteLine("PAYLOAD_MISSING"); return 4; }
             if (rc != 0) { Console.WriteLine("PAYLOAD_FAIL"); return 4; }
             FixProfileStore(dir);
-            CreateShortcuts(dir, false);
+            CreateShortcuts(dir);
             Console.WriteLine("INSTALL_OK " + dir);
             return 0;
         }
@@ -170,7 +170,7 @@ namespace DSHInstaller
             catch { /* non-fatal */ }
         }
 
-        public static void CreateShortcuts(string dir, bool startApp)
+        public static void CreateShortcuts(string dir)
         {
             try
             {
@@ -201,10 +201,18 @@ namespace DSHInstaller
                 lnk.WorkingDirectory = dir;
                 lnk.IconLocation = icon;
                 lnk.Save();
-                if (startApp)
-                {
+            }
+            catch { }
+        }
+
+        public static void LaunchApp(string dir)
+        {
+            try
+            {
+                string appExe = Path.Combine(dir, "electron", "electron.exe");
+                string appDir = Path.Combine(dir, "app");
+                if (File.Exists(appExe))
                     Process.Start(new ProcessStartInfo(appExe, "\"" + appDir + "\"") { WorkingDirectory = dir });
-                }
             }
             catch { }
         }
@@ -343,7 +351,12 @@ namespace DSHInstaller
             btnBack.Click += (s, e) => { ShowPage(page1); };
             btnInstall.Click += (s, e) => { StartInstall(); };
             btnCancel.Click += (s, e) => { Application.Exit(); };
-            btnFinish.Click += (s, e) => { Result = 0; Application.Exit(); };
+            btnFinish.Click += (s, e) =>
+            {
+                if (chkLaunch.Checked) Program.LaunchApp(txtDir.Text.Trim());
+                Result = 0;
+                Application.Exit();
+            };
 
             Controls.Add(btnBack); Controls.Add(btnNext); Controls.Add(btnInstall);
             Controls.Add(btnCancel); Controls.Add(btnFinish);
@@ -428,7 +441,7 @@ namespace DSHInstaller
                 lblProgress.Text = "100%";
                 lblStatus.Text = "正在关联插件依赖...";
                 Program.FixProfileStore(txtDir.Text.Trim());
-                Program.CreateShortcuts(txtDir.Text.Trim(), chkLaunch.Checked);
+                Program.CreateShortcuts(txtDir.Text.Trim());
                 ShowPage(page4);
             };
         }
