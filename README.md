@@ -21,6 +21,7 @@ DeepSeek Harness Web 便携版 —— 第三方整合打包项目(非官方)
 - 一键卸载(`uninstall.cmd`,自动提权,清除快捷方式与数据)
 - 数据默认保存在安装目录 `data\` 下,不写注册表、不污染系统
 - 内置插件:任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心(10 款皮肤)
+- 内置插件来自 [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)(Apache-2.0)。
 
 ## 使用
 
