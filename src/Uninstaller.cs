@@ -17,6 +17,11 @@ namespace DSHUninstaller
         [STAThread]
         static int Main(string[] args)
         {
+            // Never hold the install directory as this process's current
+            // directory: Windows locks a process's CWD, which would keep the
+            // (empty) install folder undeletable until this process exits.
+            try { Environment.CurrentDirectory = Path.GetTempPath(); } catch { }
+
             // Cleanup mode: this copy was placed in %TEMP% by the uninstaller;
             // args[0] is the install directory to remove entirely.
             if (args.Length > 0 && args[0].Length > 3 && Directory.Exists(args[0]))
@@ -27,7 +32,8 @@ namespace DSHUninstaller
                 {
                     try
                     {
-                        Process.Start(new ProcessStartInfo(Application.ExecutablePath, "\"" + target + "\" --elevated") { Verb = "runas", UseShellExecute = true });
+                        Process.Start(new ProcessStartInfo(Application.ExecutablePath, "\"" + target + "\" --elevated")
+                        { Verb = "runas", UseShellExecute = true, WorkingDirectory = Path.GetTempPath() });
                         return 0;
                     }
                     catch { /* elevation unavailable - retry below */ }
@@ -125,7 +131,7 @@ namespace DSHUninstaller
         Panel page1, page2;
         Button btnUninstall, btnCancel, btnFinish;
         ProgressBar progress;
-        Label lblStatus, lblStep, lblTitle;
+        Label lblStatus, lblTitle;
         CheckBox chkExtra;
 
         public MainForm()
@@ -232,8 +238,6 @@ namespace DSHUninstaller
 
         void BuildLayout()
         {
-            lblStep = MakeLabel("", 9f, FontStyle.Regular, TextDim, new Point(500, 6));
-
             // --- page 1: confirm ---
             page1 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
             page1.Controls.Add(MakeLabel("卸载 DeepSeek Harness", 17f, FontStyle.Bold, TextMain, new Point(36, 26)));
@@ -253,7 +257,6 @@ namespace DSHUninstaller
             };
             page1.Controls.Add(chkExtra);
             page1.Controls.Add(MakeLabel("提示:卸载前建议先运行「导出数据.cmd」备份凭证与会话。", 9.5f, FontStyle.Regular, Color.FromArgb(0xB4, 0x77, 0x1E), new Point(36, 232)));
-            page1.Controls.Add(lblStep);
 
             // --- page 2: progress / done (in-place transition) ---
             page2 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
@@ -271,7 +274,6 @@ namespace DSHUninstaller
                 ForeColor = TextDim
             };
             page2.Controls.Add(lblTitle); page2.Controls.Add(progress); page2.Controls.Add(lblStatus);
-            page2.Controls.Add(lblStep);
 
             btnUninstall = MakePrimaryButton("卸载", new Point(392, 356), Color.FromArgb(0xC0, 0x39, 0x2B));
             btnCancel = MakeSecondaryButton("取消", new Point(272, 356));
@@ -299,7 +301,6 @@ namespace DSHUninstaller
             btnUninstall.Visible = (p == page1);
             btnCancel.Visible = (p == page1);
             btnFinish.Visible = (p == page2 && done);
-            lblStep.Text = p == page1 ? "确认" : done ? "完成" : "卸载中";
         }
 
         bool done = false;
@@ -361,7 +362,7 @@ namespace DSHUninstaller
                     {
                         File.Copy(Application.ExecutablePath, copy, true);
                         Process.Start(new ProcessStartInfo(copy, "\"" + Program.RootDir + "\"")
-                        { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden });
+                        { UseShellExecute = true, WindowStyle = ProcessWindowStyle.Hidden, WorkingDirectory = Path.GetTempPath() });
                     }
                     catch
                     {
