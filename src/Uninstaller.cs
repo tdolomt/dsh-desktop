@@ -257,7 +257,7 @@ namespace DSHUninstaller
 
             // --- page 2: progress / done (in-place transition) ---
             page2 = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
-            lblTitle = MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 48));
+            lblTitle = MakeLabel("正在卸载", 17f, FontStyle.Bold, TextMain, new Point(36, 40));
             progress = new ProgressBar
             {
                 Location = new Point(36, 100), Size = new Size(548, 18),
@@ -334,15 +334,21 @@ namespace DSHUninstaller
                     bgw.ReportProgress(28, "正在清理安装目录...");
                     try
                     {
-                        long total = CountFiles(Program.RootDir);
+                        long total = 0;
+                        try { total = Directory.GetDirectories(Program.RootDir).Length; } catch { total = 1; }
                         long done = 0;
-                        DeleteContents(Program.RootDir, Application.ExecutablePath,
-                            (d, t) =>
-                            {
-                                done = d;
-                                int pct = 28 + (int)(62 * Math.Min(1.0, (double)d / Math.Max(1, t)));
-                                bgw.ReportProgress(Math.Min(pct, 90), "正在删除文件...");
-                            });
+                        foreach (string d in Directory.GetDirectories(Program.RootDir))
+                        {
+                            try { Directory.Delete(d, true); } catch { }
+                            done++;
+                            int pct = 28 + (int)(62 * Math.Min(1.0, (double)done / Math.Max(1, total)));
+                            bgw.ReportProgress(Math.Min(pct, 90), "正在删除组件...");
+                        }
+                        foreach (string f in Directory.GetFiles(Program.RootDir))
+                        {
+                            if (string.Equals(f, Application.ExecutablePath, StringComparison.OrdinalIgnoreCase)) continue;
+                            try { File.Delete(f); } catch { }
+                        }
                     }
                     catch { /* continue - cleanup copy will retry */ }
                     bgw.ReportProgress(92, "正在完成清理...");
@@ -397,39 +403,6 @@ namespace DSHUninstaller
                 lblStatus.Text = "DeepSeek Harness 已成功卸载,安装目录已清理。\r\n残留文件将在窗口关闭后自动清除。";
                 ShowPage(page2);
             };
-        }
-
-        static long CountFiles(string dir)
-        {
-            try { return Directory.GetFiles(dir, "*", SearchOption.AllDirectories).Length; }
-            catch { return 1; }
-        }
-
-        static void DeleteContents(string dir, string keep, Action<long, long> progress, ref long done, long total)
-        {
-            foreach (string f in Directory.GetFiles(dir))
-            {
-                if (keep != null && string.Equals(f, keep, StringComparison.OrdinalIgnoreCase)) { done++; continue; }
-                try { File.Delete(f); } catch { }
-                done++;
-                progress(done, total);
-            }
-            foreach (string d in Directory.GetDirectories(dir))
-            {
-                try
-                {
-                    DeleteContents(d, keep, progress, ref done, total);
-                    Directory.Delete(d);
-                }
-                catch { }
-            }
-        }
-
-        static void DeleteContents(string dir, string keep, Action<long, long> progress)
-        {
-            long done = 0;
-            long total = CountFiles(dir);
-            DeleteContents(dir, keep, progress, ref done, total);
         }
 
         static void TryDelete(string path)
