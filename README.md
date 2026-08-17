@@ -25,7 +25,7 @@ DSH Desktop —— DeepSeek Harness 便携桌面版(非官方整合)
 
 ## 使用
 
-下载发行版:`DSH-Desktop-1.0.0.zip`(见 GitHub Releases 页)
+下载发行版:`DSH-Desktop-1.0.0.zip`(见 Releases 页)
 
 ```
 解压 → 双击 DSH-Installer-Stub.exe → 选择安装位置 → 完成
