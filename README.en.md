@@ -4,9 +4,8 @@ English | [中文](README.md)
 
 DSH Desktop — portable desktop build of DeepSeek Harness (unofficial)
 
-Bundles DeepSeek Harness with everything it needs (Node.js, Electron, all
-dependencies) into a **desktop app**: no prerequisites to install — unpack,
-install, use.
+Bundles DeepSeek Harness with everything it needs into a **desktop app**:
+no prerequisites to install — unpack, install, use.
 
 > ⚠️ This project is an unofficial integration by an individual and has no
 > affiliation with, or endorsement from, DeepSeek.
@@ -14,15 +13,12 @@ install, use.
 
 ## Features
 
-- Standalone app window (Electron shell) — no browser needed
-- Bundled Node.js / Electron / all dsh dependencies — nothing to install first
-- Core data is packed encrypted (`payload.dat`, AES-256) — the contents are
-  not visible without installing
+- **Standalone app window**
+- Bundled Node.js / Electron / all dsh dependencies — **zero prerequisites**
 - Install wizard: custom install path (default `D:\Program Files\DSH`),
   progress bar, one-click launch
-- Closing the window keeps it running in the tray; full exit via the tray menu
-- One-click uninstall (`uninstall.cmd`, auto-elevates, removes shortcuts and data)
-- Data is stored under the install dir `data\` by default — no registry writes
+- Data is stored under the install dir `data\` by default — no registry
+  writes, no system pollution
 - Bundled plugins: Task Board, Live Token Stats, Whale Pet, Skin Center,
   LiangShen Mode
 - Bundled plugins come from
@@ -31,31 +27,28 @@ install, use.
 
 ## Usage
 
-1. Download the release `DSH-Desktop-1.1.0.zip` (see the Releases page)
-2. Unzip → run `DSH-Installer-Stub.exe` → choose the install location → done
-3. After the first launch, configure your API Key under Settings → Models
+Download the release: see the Releases page
 
-Installing over an existing directory upgrades in place; sessions and
-credentials are kept.
 Full guide: [docs/安装说明.txt](docs/安装说明.txt)
-(install / update dsh / update Node / plugin management / uninstall / FAQ).
 
 ## Daily maintenance
 
-Six maintenance scripts ship in the install dir `scripts\` (also kept under
-`scripts/` in this repository). Double-click to run; after any script, fully
-exit from the tray and start the app again:
+Six maintenance scripts ship in the install dir (also kept under `scripts/`
+in this repository):
 
 | Script | Purpose |
 |---|---|
 | `安装插件.cmd` | Install a new plugin (enter the package name when prompted) |
 | `卸载插件.cmd` | Uninstall a plugin (cleans the bundle references too) |
-| `更新插件.cmd` | Update all Web UI plugins to the latest versions |
+| `更新插件.cmd` | Update **all** Web UI plugins |
 | `更新DSH.cmd` | Update the dsh engine |
 | `导出数据.cmd` | Export credentials/sessions/settings/plugin config to a zip (desktop) |
 | `恢复数据.cmd` | Restore user data from a backup zip after (re)installing |
 
+After any script: restart the app for changes to take effect.
 Plugins live under the install dir `data\profiles\web\`.
+
+Installing over the existing directory updates in place.
 
 ## Building from source
 
