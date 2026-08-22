@@ -15,10 +15,8 @@ no prerequisites to install — unpack, install, use.
 
 - **Standalone app window**
 - Bundled Node.js / Electron / all dsh dependencies — **zero prerequisites**
-- Install wizard: custom install path (default `D:\Program Files\DSH`),
-  progress bar, one-click launch
-- Data is stored under the install dir `data\` by default — no registry
-  writes, no system pollution
+- Install wizard: custom install path (default `D:\Program Files\DSH`)
+- Data is stored under the install dir `data\` by default — no registry writes
 - Bundled plugins: Task Board, Live Token Stats, Whale Pet, Skin Center,
   LiangShen Mode
 - Bundled plugins come from

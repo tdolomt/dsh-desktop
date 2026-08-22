@@ -13,8 +13,8 @@ DSH Desktop —— DeepSeek Harness 便携桌面版(非官方整合)
 
 - **独立应用窗口**
 - 内置 Node.js / Electron / dsh 全部依赖,**零前置环境**
-- 安装向导:自定义安装位置(默认 `D:\Program Files\DSH`)、进度条、一键启动
-- 数据默认保存在安装目录 `data\` 下,不写注册表、不污染系统
+- 安装向导:自定义安装位置(默认 `D:\Program Files\DSH`)
+- 数据默认保存在安装目录 `data\` 下,不写注册表
 - 内置插件:任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心、梁神模式
 - 内置插件来自 [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)(Apache-2.0)。
 
