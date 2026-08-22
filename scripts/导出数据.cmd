@@ -5,7 +5,7 @@ rem  settings, plugin config) to a zip on the
 rem  desktop. Regenerable parts (node_modules,
 rem  logs) are excluded.
 rem ============================================
-cd /d "%~dp0"
+cd /d "%~dp0.."
 for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmm"') do set "STAMP=%%i"
 set "STAGE=%TEMP%\dsh_export_%RANDOM%"
 set "OUT=%USERPROFILE%\Desktop\DSH-Data-%STAMP%.zip"

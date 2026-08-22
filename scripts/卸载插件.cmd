@@ -2,7 +2,7 @@
 rem ============================================
 rem  Uninstall a dsh plugin (double-click me)
 rem ============================================
-cd /d "%~dp0"
+cd /d "%~dp0.."
 set PATH=%CD%\node;%CD%\global;%PATH%
 set npm_config_prefix=%CD%\global
 set npm_config_cache=%CD%\cache

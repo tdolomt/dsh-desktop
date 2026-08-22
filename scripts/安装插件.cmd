@@ -5,7 +5,7 @@ rem  Example package names:
 rem    @linxin666/dsh-client-ui-task-board
 rem    @linxin666/dsh-ssh
 rem ============================================
-cd /d "%~dp0"
+cd /d "%~dp0.."
 set PATH=%CD%\node;%CD%\global;%PATH%
 set npm_config_prefix=%CD%\global
 set npm_config_cache=%CD%\cache

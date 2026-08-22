@@ -4,7 +4,7 @@ rem  Update the DSH engine (double-click me)
 rem  Your data (sessions/config/credentials) is
 rem  NOT touched by this update.
 rem ============================================
-cd /d "%~dp0"
+cd /d "%~dp0.."
 set PATH=%CD%\node;%CD%\global;%PATH%
 set npm_config_prefix=%CD%\global
 set npm_config_cache=%CD%\cache
