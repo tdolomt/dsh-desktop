@@ -29,7 +29,7 @@ dependencies) into a **fully self-contained desktop app**: on a fresh Windows
 
 ## Usage
 
-Download the release: `DSH-Desktop-1.0.0.zip` (see the Releases page)
+Download the release: `DSH-Desktop-1.1.0.zip` (see the Releases page)
 
 ```
 
@@ -91,7 +91,7 @@ rebuild.cmd
 
 ```
 
-Output: `DSH-Desktop-1.0.0.zip` (installer + encrypted payload + docs).
+Output: `DSH-Desktop-1.1.0.zip` (installer + encrypted payload + docs).
 
 ## Repository contents
 

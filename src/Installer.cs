@@ -333,7 +333,7 @@ namespace DSHInstaller
             };
             var sub = new Label
             {
-                Text = "安装程序  ·  v1.0.0",
+                Text = "安装程序  ·  v1.1.0",
                 Font = new Font("Microsoft YaHei UI", 9f),
                 ForeColor = Color.FromArgb(0xC9, 0xDD, 0xF4),
                 BackColor = Color.Transparent,
