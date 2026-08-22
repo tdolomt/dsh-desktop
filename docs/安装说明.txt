@@ -61,7 +61,7 @@ Node 无需频繁升级。)
 ------------
 插件位于 安装目录\data\profiles\web\(随数据同区,更新引擎不影响)。
 
-已内置插件:任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心(10 款皮肤)。
+已内置插件:任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心(10 款皮肤)、梁神模式(两阶段锚定 Agent 预设)。
 
 安装新插件(在安装目录打开 cmd):
 
@@ -82,7 +82,11 @@ Node 无需频繁升级。)
   @linxin666/dsh-pet                   鲸鱼娘宠物
   @linxin666/dsh-live-stats            实时令牌统计
   @linxin666/dsh-skins                 皮肤中心全家桶
+  @linxin666/dsh-liangshen             梁神模式(两阶段锚定预设)
   @linxin666/dsh-ssh                   远程 SSH 连接
+
+梁神模式使用:新建会话 → 预设选择器选「梁神模式」。预设会在启动时
+自动同步到 data\.agent-presets(需 dsh 引擎 ≥ 0.1.1-rc.1,本包已内置)。
 
 插件装不上(报 ERR_PNPM_IGNORED_BUILDS):
   编辑 安装目录\data\profiles\web\pnpm-workspace.yaml,
