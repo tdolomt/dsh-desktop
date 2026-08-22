@@ -5,8 +5,8 @@ English | [中文](README.md)
 DSH Desktop — portable desktop build of DeepSeek Harness (unofficial)
 
 Bundles DeepSeek Harness with everything it needs (Node.js, Electron, all
-dependencies) into a **self-contained desktop app**: on a fresh Windows 10/11
-64-bit machine, no prerequisites of any kind — unpack, install, use.
+dependencies) into a **fully self-contained desktop app**: on a fresh Windows
+10/11 64-bit machine, no prerequisites of any kind — unpack, install, use.
 
 > ⚠️ This project is an unofficial integration by an individual and has no
 > affiliation with, or endorsement from, DeepSeek.
@@ -32,15 +32,17 @@ dependencies) into a **self-contained desktop app**: on a fresh Windows 10/11
 Download the release: `DSH-Desktop-1.0.0.zip` (see the Releases page)
 
 ```
+
 Unzip → run DSH-Installer-Stub.exe → choose install location → done
+
 ```
 
 Full guide: [docs/安装说明.txt](docs/安装说明.txt)
 (install / update dsh / update Node / plugin management / uninstall / FAQ).
 
-## Daily maintenance (three one-click scripts in the install dir)
+## Daily maintenance (six one-click scripts in the install dir)
 
-After installation, the install directory ships three maintenance scripts
+After installation, the install directory ships six maintenance scripts
 (also kept under `scripts/` in this repository):
 
 | Script | Purpose |
@@ -62,12 +64,14 @@ automatically.
 ### Layout
 
 ```
+
 dsh-desktop/
-  src/             Install wizard (Installer.cs) & encrypted packer (Packer.cs)
-  docs/            Install guide & disclaimer
-  DSH.ico          App and installer icon
-  rebuild.cmd      One-click rebuild script
-  DSH-Portable/    Build input (assembled manually, see below)
+src/             Install wizard (Installer.cs) & encrypted packer (Packer.cs)
+docs/            Install guide & disclaimer
+DSH.ico          App and installer icon
+rebuild.cmd      One-click rebuild script
+DSH-Portable/    Build input (assembled manually, see below)
+
 ```
 
 ### Requirements
@@ -82,16 +86,17 @@ dsh-desktop/
 ### Build
 
 ```
-rebuild.cmd
-```
 
+rebuild.cmd
+
+```
 
 Output: `DSH-Desktop-1.0.0.zip` (installer + encrypted payload + docs).
 
 ## Repository contents
 
 - Source code and build scripts only; large artifacts (payload, zip) are
-  published as **GitHub Release assets** 
+  published as **GitHub Release assets**
 - `rebuild.cmd` uses relative paths — clone anywhere and run
 - License: this repository is **MIT Licensed** (see LICENSE); bundled
   components belong to their respective owners (DeepSeek Harness: MIT;
@@ -106,3 +111,4 @@ Output: `DSH-Desktop-1.0.0.zip` (installer + encrypted payload + docs).
   Copyright belongs to their original authors.
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 - [Electron](https://www.electronjs.org/) / [Node.js](https://nodejs.org/)
+```
