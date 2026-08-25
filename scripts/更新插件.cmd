@@ -10,6 +10,13 @@ set npm_config_userconfig=%CD%\.npmrc
 set DSH_HOME=%CD%\data
 echo Updating plugins...
 dsh plugin --profile web up --latest
+if errorlevel 1 (
+    echo.
+    echo [FAILED] Update did not complete. See the errors above.
+    echo Common cause: network trouble. Retry later.
+    pause
+    exit /b 1
+)
 echo.
-echo Done. Please exit DSH Desktop from the tray and start it again.
+echo DONE. Please exit DSH Desktop from the tray and start it again.
 pause
