@@ -14,7 +14,7 @@ set DSH_HOME=%CD%\data
 set /p PKG=Enter plugin package name: 
 if "%PKG%"=="" (echo No package entered. & pause & exit /b 1)
 echo Installing %PKG% ...
-dsh plugin --profile web add %PKG%
+call dsh plugin --profile web add %PKG%
 if errorlevel 1 (
     echo.
     echo [FAILED] Install did not complete. See the errors above.

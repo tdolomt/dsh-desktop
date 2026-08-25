@@ -11,7 +11,7 @@ set DSH_HOME=%CD%\data
 set /p PKG=Enter plugin package name to remove: 
 if "%PKG%"=="" (echo No package entered. & pause & exit /b 1)
 echo Removing %PKG% ...
-dsh plugin --profile web remove %PKG%
+call dsh plugin --profile web remove %PKG%
 if errorlevel 1 (
     echo.
     echo [FAILED] Remove did not complete. See the errors above.

@@ -21,7 +21,7 @@ set npm_config_prefix=%CD%\global
 set npm_config_cache=%CD%\cache
 set CI=true
 cd /d "%CD%\data\profiles\web"
-pnpm install
+call pnpm install
 if errorlevel 1 (
     echo.
     echo [FAILED] Plugin re-link failed. See the errors above.

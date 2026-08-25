@@ -11,7 +11,7 @@ set npm_config_cache=%CD%\cache
 set npm_config_userconfig=%CD%\.npmrc
 set DSH_HOME=%CD%\data
 echo Updating DSH engine...
-npm i -g @deepseek-ai/dsh@latest --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs
+call npm i -g @deepseek-ai/dsh@latest --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs
 if errorlevel 1 (
     echo.
     echo [FAILED] Update did not complete. See the errors above.
