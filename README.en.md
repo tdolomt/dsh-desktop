@@ -76,7 +76,7 @@ dsh-desktop/
 rebuild.cmd
 ```
 
-Output: `DSH-Desktop-1.1.0.zip` (installer + encrypted payload + docs).
+Output: `DSH-Desktop-2.1.0.zip` (installer + encrypted payload + docs).
 
 ## Repository contents
 

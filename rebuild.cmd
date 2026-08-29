@@ -4,7 +4,7 @@ rem  DSH web portable - one-click rebuild
 rem  Requirements: Windows 10/11 x64, 7-Zip,
 rem                .NET Framework 4.x (built-in)
 rem  Input:  DSH-Portable\  (the payload kit)
-rem  Output: DSH-Desktop-1.1.0.zip (distributable)
+rem  Output: DSH-Desktop-2.1.0.zip (distributable)
 rem ============================================
 setlocal
 cd /d "%~dp0"
@@ -36,10 +36,10 @@ if errorlevel 1 (echo ENCRYPT FAILED & pause & exit /b 1)
 del /q "%TEMP%\dsh_payload_tmp.zip" 2>nul
 
 echo [2/3] Assembling dist zip...
-del /q "%~dp0DSH-Desktop-1.1.0.zip" 2>nul
-"%SZ%" a -tzip -mx=5 "%~dp0DSH-Desktop-1.1.0.zip" "%~dp0DSH-Installer-Stub.exe" "%~dp0payload.dat" "%~dp0docs\*.txt" >nul
+del /q "%~dp0DSH-Desktop-2.1.0.zip" 2>nul
+"%SZ%" a -tzip -mx=5 "%~dp0DSH-Desktop-2.1.0.zip" "%~dp0DSH-Installer-Stub.exe" "%~dp0payload.dat" "%~dp0docs\*.txt" >nul
 if errorlevel 1 (echo ZIP FAILED & pause & exit /b 1)
 
 echo [3/3] Done!
-echo Output: %~dp0DSH-Desktop-1.1.0.zip
+echo Output: %~dp0DSH-Desktop-2.1.0.zip
 pause

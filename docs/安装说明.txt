@@ -98,6 +98,9 @@ Node 无需频繁升级。)
 - 只迁移数据:拷贝安装目录下的 data 文件夹
 - 数据默认在安装目录 data\;如需放别处,编辑 datadir.ini
   (把完整路径写为第一行非注释内容),重启生效
+- pnpm 依赖缓存默认位于安装目录 cache\pnpm;如需放到安装目录之外
+  (如 D:\ProgramData\DSH Desktop),编辑安装目录下 pnpmstore.ini,
+  第一行非注释内容写完整路径;卸载重装后 store/cache 仍可复用。
 
 八、卸载
 --------

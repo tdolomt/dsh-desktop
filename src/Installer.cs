@@ -150,7 +150,24 @@ namespace DSHInstaller
                 string nodeExe = Path.Combine(dir, "node", "node.exe");
                 string pnpmCjs = Path.Combine(dir, "global", "node_modules", "pnpm", "bin", "pnpm.cjs");
                 if (!File.Exists(nodeExe) || !File.Exists(pnpmCjs) || !File.Exists(Path.Combine(profile, "package.json"))) return;
-                var psi = new ProcessStartInfo(nodeExe, "\"" + pnpmCjs + "\" install")
+                // pnpmstore.ini (first non-empty line) moves pnpm cache/store/state
+                // outside the kit, e.g. D:\ProgramData\DSH Desktop, so it survives
+                // uninstall/reinstall. Default: kit cache\pnpm.
+                string pnpmBase = Path.Combine(dir, "cache", "pnpm");
+                string ini = Path.Combine(dir, "pnpmstore.ini");
+                if (File.Exists(ini))
+                {
+                    foreach (string line in File.ReadAllLines(ini))
+                    {
+                        string s = line.Trim();
+                        if (s.Length == 0 || s.StartsWith("#")) continue;
+                        pnpmBase = s;
+                        break;
+                    }
+                }
+                string pnpmHome = Path.Combine(pnpmBase, "pnpm");
+                string storeDir = Path.Combine(pnpmHome, "store");
+                var psi = new ProcessStartInfo(nodeExe, "\"" + pnpmCjs + "\" install --store-dir \"" + storeDir + "\"")
                 {
                     WorkingDirectory = profile,
                     UseShellExecute = false,
@@ -163,6 +180,9 @@ namespace DSHInstaller
                 psi.EnvironmentVariables["PATH"] =
                     Path.Combine(dir, "node") + ";" + Path.Combine(dir, "global") + ";" +
                     (psi.EnvironmentVariables["PATH"] ?? "");
+                psi.EnvironmentVariables["PNPM_HOME"] = pnpmHome;
+                psi.EnvironmentVariables["XDG_CACHE_HOME"] = Path.Combine(pnpmBase, "cache");
+                psi.EnvironmentVariables["XDG_STATE_HOME"] = Path.Combine(pnpmBase, "state");
                 using (Process p = Process.Start(psi))
                 {
                     p.WaitForExit(240000);
@@ -333,7 +353,7 @@ namespace DSHInstaller
             };
             var sub = new Label
             {
-                Text = "安装程序  ·  v1.1.0",
+                Text = "安装程序  ·  v2.1.0",
                 Font = new Font("Microsoft YaHei UI", 9f),
                 ForeColor = Color.FromArgb(0xC9, 0xDD, 0xF4),
                 BackColor = Color.Transparent,
