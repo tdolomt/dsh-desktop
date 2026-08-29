@@ -22,10 +22,18 @@ echo [0/3] Compiling tools...
 if errorlevel 1 (echo COMPILE PACKER FAILED & pause & exit /b 1)
 "%CSC%" /nologo /target:winexe /out:"%~dp0DSH-Installer-Stub.exe" /codepage:65001 /win32icon:"%~dp0DSH-Portable\app\DSH.ico" /r:System.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.IO.Compression.dll /r:System.IO.Compression.FileSystem.dll "%~dp0src\Installer.cs"
 if errorlevel 1 (echo COMPILE STUB FAILED & pause & exit /b 1)
+"%CSC%" /nologo /target:winexe /out:"%~dp0DSH-Portable\uninstall.exe" /codepage:65001 /win32icon:"%~dp0DSH-Portable\app\DSH.ico" /r:System.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll "%~dp0src\Uninstaller.cs"
+if errorlevel 1 (echo COMPILE UNINSTALLER FAILED & pause & exit /b 1)
 
 echo [1/3] Packing and encrypting payload...
-"%~dp0packer.exe" "%~dp0DSH-Portable" "%~dp0payload.dat"
-if errorlevel 1 (echo PACK FAILED & pause & exit /b 1)
+rem zip with 7-Zip (multithreaded; the old single-threaded .NET ZipArchive
+rem took minutes over ~36k files), then AES-encrypt into payload.dat
+del /q "%TEMP%\dsh_payload_tmp.zip" 2>nul
+"%SZ%" a -tzip -mx=5 -mmt=on "%TEMP%\dsh_payload_tmp.zip" "%~dp0DSH-Portable\*" >nul
+if errorlevel 1 (echo PACK ZIP FAILED & pause & exit /b 1)
+"%~dp0packer.exe" "%TEMP%\dsh_payload_tmp.zip" "%~dp0payload.dat"
+if errorlevel 1 (echo ENCRYPT FAILED & pause & exit /b 1)
+del /q "%TEMP%\dsh_payload_tmp.zip" 2>nul
 
 echo [2/3] Assembling dist zip...
 del /q "%~dp0DSH-Desktop-1.1.0.zip" 2>nul
