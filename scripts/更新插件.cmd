@@ -14,6 +14,18 @@ set "XDG_CACHE_HOME=%PNPM_BASE%\cache"
 set "XDG_STATE_HOME=%PNPM_BASE%\state"
 set npm_config_userconfig=%CD%\.npmrc
 set DSH_HOME=%CD%\data
+echo Checking plugin updates...
+pushd "%CD%\data\profiles\web"
+call pnpm outdated
+set "OUTDATED=%errorlevel%"
+popd
+if "%OUTDATED%"=="0" (
+    echo.
+    echo All plugins are up to date.
+    pause
+    exit /b 0
+)
+echo.
 echo Updating plugins...
 call dsh plugin --profile web up --latest --store-dir "%PNPM_BASE%\pnpm\store"
 if errorlevel 1 (

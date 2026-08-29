@@ -8,10 +8,17 @@ rem ============================================
 cd /d "%~dp0.."
 for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd_HHmm"') do set "STAMP=%%i"
 set "STAGE=%TEMP%\dsh_export_%RANDOM%"
-set "OUT=%USERPROFILE%\Desktop\DSH-Data-%STAMP%.zip"
+for /f %%D in ('powershell -NoProfile -Command "[Environment]::GetFolderPath('Desktop')"') do set "DESKTOP=%%D"
+set "OUT=%DESKTOP%\DSH-Data-%STAMP%.zip"
 mkdir "%STAGE%" 2>nul
 echo Exporting user data...
 robocopy "%CD%\data" "%STAGE%" /e /xd node_modules logs /nfl /ndl /njh /njs >nul
+if errorlevel 8 (
+    echo Export failed: cannot copy data.
+    rmdir /s /q "%STAGE%" 2>nul
+    pause
+    exit /b 1
+)
 powershell -NoProfile -Command "Compress-Archive -Path '%STAGE%\*' -DestinationPath '%OUT%' -Force"
 rmdir /s /q "%STAGE%" 2>nul
 if exist "%OUT%" (echo.

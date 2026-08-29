@@ -8,7 +8,9 @@ cd /d "%~dp0.."
 set /p ZIP=Enter the backup zip path (or drag it here): 
 if not exist "%ZIP%" (echo File not found. & pause & exit /b 1)
 echo Restoring user data...
-powershell -NoProfile -Command "Expand-Archive -Path '%ZIP%' -DestinationPath '%CD%\data' -Force"
+set "BACKUP_ZIP=%ZIP%"
+set "DSH_DATA=%CD%\data"
+powershell -NoProfile -Command "Expand-Archive -LiteralPath $env:BACKUP_ZIP -DestinationPath $env:DSH_DATA -Force"
 if errorlevel 1 (
     echo.
     echo [FAILED] Could not unzip the backup. See the errors above.
