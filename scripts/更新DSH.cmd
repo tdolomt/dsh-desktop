@@ -16,6 +16,21 @@ set "XDG_CACHE_HOME=%PNPM_BASE%\cache"
 set "XDG_STATE_HOME=%PNPM_BASE%\state"
 set npm_config_userconfig=%CD%\.npmrc
 set DSH_HOME=%CD%\data
+echo Checking current DSH engine version...
+for /f "tokens=3 delims=@" %%V in ('npm list -g @deepseek-ai/dsh --depth=0 2^>nul ^| findstr /R "dsh@"') do set "CUR=%%V"
+for /f %%V in ('npm view @deepseek-ai/dsh version 2^>nul') do set "LATEST=%%V"
+if not defined CUR set "CUR=unknown"
+if not defined LATEST set "LATEST=unknown"
+if "%CUR%"=="%LATEST%" (
+    echo Already up to date: @deepseek-ai/dsh@%CUR%
+    echo.
+    echo Please exit DSH Desktop from the tray and start it again.
+    pause
+    exit /b 0
+)
+echo Current: %CUR%
+echo Latest:  %LATEST%
+echo.
 echo Updating DSH engine...
 call npm i -g @deepseek-ai/dsh@latest --allow-scripts=@deepseek-ai/dsh-subprocess-local,koffi,node-pty,@google/genai,protobufjs
 if errorlevel 1 (
@@ -25,6 +40,8 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+for /f "tokens=3 delims=@" %%V in ('npm list -g @deepseek-ai/dsh --depth=0 2^>nul ^| findstr /R "dsh@"') do set "NEW=%%V"
+if defined NEW echo Updated to: @deepseek-ai/dsh@%NEW%
 rem Re-apply the harness-home display patch (engine updates overwrite it):
 rem show the real DSH_HOME path in instruction displays instead of the
 rem unresolvable literal $DSH_HOME token, so agents can locate AGENTS.md.
