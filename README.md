@@ -15,8 +15,9 @@ DSH Desktop —— DeepSeek Harness 便携桌面版(非官方整合)
 - 内置 Node.js / Electron / dsh 全部依赖,**零前置环境**
 - 安装向导:自定义安装位置(默认 `D:\Program Files\DSH`)
 - 数据默认保存在安装目录 `data\` 下,不写注册表
-- 内置插件:任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心、梁神模式
-- 内置插件来自 [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)(Apache-2.0)。
+- 内置插件:任务看板、实时令牌统计、鲸鱼娘宠物、皮肤中心、梁神模式、插件市场(`dshmarket`)、右侧边栏(`dsh-better-sidebar`)、上下文管理(`dsh-context`)、多智能体(`@nanmicoder/dsh-agent-teams`)
+- 插件依赖的 pnpm store/cache/state 默认放在 **`D:\ProgramData\DSH Desktop`**(通过安装目录下 `pnpmstore.ini` 配置),不写 C 盘,卸载重装后仍可复用
+- 内置插件来源见 [致谢与插件来源](#致谢与插件来源)。
 
 ## 使用
 
@@ -41,6 +42,8 @@ DSH Desktop —— DeepSeek Harness 便携桌面版(非官方整合)
 插件安装位置:安装目录 `data\profiles\web\`。
 
 可以直接覆盖更新
+
+- pnpm 插件依赖的 store/cache/state 由安装目录下 `pnpmstore.ini` 控制(默认 `D:\ProgramData\DSH Desktop`),修改后重启应用生效。
 
 ## 从源码构建
 
@@ -87,5 +90,9 @@ rebuild.cmd
   来源于第三方开源项目
   [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)
   (Apache-2.0),经 npm 以 `@linxin666/*` 作用域发布,版权归其原作者所有。
+- 插件市场 `dshmarket` 来源于 [dsh-market/dsh-market](https://github.com/dsh-market/dsh-market)。
+- 右侧边栏 `dsh-better-sidebar` 来源于 [omdsh-dev/DSH-better-sidebar](https://github.com/omdsh-dev/DSH-better-sidebar)。
+- 上下文管理 `dsh-context` 来源于 [bowenliang123/dsh-context](https://github.com/bowenliang123/dsh-context)。
+- 多智能体 `@nanmicoder/dsh-agent-teams` 来源于 [NanmiCoder/dsh-agent-teams](https://github.com/NanmiCoder/dsh-agent-teams)。
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 - [Electron](https://www.electronjs.org/) / [Node.js](https://nodejs.org/)

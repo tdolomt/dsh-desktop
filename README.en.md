@@ -18,10 +18,13 @@ no prerequisites to install — unpack, install, use.
 - Install wizard: custom install path (default `D:\Program Files\DSH`)
 - Data is stored under the install dir `data\` by default — no registry writes
 - Bundled plugins: Task Board, Live Token Stats, Whale Pet, Skin Center,
-  LiangShen Mode
-- Bundled plugins come from
-  [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)
-  (Apache-2.0).
+  LiangShen Mode, Plugin Market (`dshmarket`), Better Sidebar
+  (`dsh-better-sidebar`), Context Manager (`dsh-context`), AgentTeams
+  (`@nanmicoder/dsh-agent-teams`)
+- pnpm store/cache/state default to **`D:\ProgramData\DSH Desktop`**
+  (configurable via `pnpmstore.ini` in the install dir) — no C-drive writes,
+  and the store survives uninstall/reinstall
+- Bundled plugin sources: see "Credits & plugin sources" below
 
 ## Usage
 
@@ -47,6 +50,10 @@ After any script: restart the app for changes to take effect.
 Plugins live under the install dir `data\profiles\web\`.
 
 Installing over the existing directory updates in place.
+
+- pnpm store/cache/state location is controlled by `pnpmstore.ini`
+  in the install dir (default `D:\ProgramData\DSH Desktop`);
+  restart the app after changing it.
 
 ## Building from source
 
@@ -95,5 +102,9 @@ Output: `DSH-Desktop-2.1.0.zip` (installer + encrypted payload + docs).
   [zhu1090093659/dsh-web-ui](https://github.com/zhu1090093659/dsh-web-ui)
   (Apache-2.0), published on npm under the `@linxin666/*` scope.
   Copyright belongs to their original authors.
+- Plugin market `dshmarket` comes from [dsh-market/dsh-market](https://github.com/dsh-market/dsh-market).
+- Right sidebar `dsh-better-sidebar` comes from [omdsh-dev/DSH-better-sidebar](https://github.com/omdsh-dev/DSH-better-sidebar).
+- Context manager `dsh-context` comes from [bowenliang123/dsh-context](https://github.com/bowenliang123/dsh-context).
+- Multi-agent `@nanmicoder/dsh-agent-teams` comes from [NanmiCoder/dsh-agent-teams](https://github.com/NanmiCoder/dsh-agent-teams).
 - [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 - [Electron](https://www.electronjs.org/) / [Node.js](https://nodejs.org/)
