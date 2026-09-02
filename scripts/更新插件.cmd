@@ -27,7 +27,7 @@ if "%OUTDATED%"=="0" (
 )
 echo.
 echo Updating plugins...
-call dsh plugin --profile web up --latest --store-dir "%PNPM_BASE%\pnpm\store"
+call dsh plugin --profile web up --store-dir "%PNPM_BASE%\pnpm\store"
 if errorlevel 1 (
     echo.
     echo [FAILED] Update did not complete. See the errors above.
