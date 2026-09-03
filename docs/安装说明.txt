@@ -116,7 +116,7 @@ Q: 提示端口 3080 被占用 / 启动超时?
 A: 其他 dsh 实例正在运行,先关闭再启动。
 
 Q: 启动失败?
-A: 查看 安装目录\data\logs\dsh-web.log。
+A: 查看 安装目录\data\logs\dsh-desktop.log。
 
 Q: 更新后界面/插件异常?
 A: dsh 处于 RC 阶段可能有不兼容变更:先备份 data,
